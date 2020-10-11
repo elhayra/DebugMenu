@@ -1,6 +1,3 @@
-//
-// Created by Eli Eli on 2020-10-04.
-//
 
 #ifndef DEBUG_MENU_DBGPARAMSPARSER_H
 #define DEBUG_MENU_DBGPARAMSPARSER_H

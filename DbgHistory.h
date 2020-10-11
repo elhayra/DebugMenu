@@ -1,6 +1,4 @@
-//
-// Created by Eli Eli on 2020-10-09.
-//
+
 
 #ifndef DEBUG_MENU_DBGHISTORY_H
 #define DEBUG_MENU_DBGHISTORY_H

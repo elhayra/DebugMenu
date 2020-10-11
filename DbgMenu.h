@@ -1,6 +1,3 @@
-//
-// Created by Eli Eli on 2020-10-07.
-//
 
 #ifndef DEBUG_MENU_DBGMENU_H
 #define DEBUG_MENU_DBGMENU_H
