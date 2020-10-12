@@ -51,6 +51,8 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                     }
             },
             []() { //callback
+                std::cout << "we have " << (int)dbg::GetNumOfParams() << " params available" << std::endl;
+
                 //no need to check the num of params, this is done automatically.
                 uint8_t myParam1 = dbg::GetParam<uint8_t>(); // get uint8_t param
                 std::string myName = dbg::GetParam<std::string>();
@@ -165,11 +167,14 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                 cmd5
             }
     };
-//
-//    dbg::SubMenu mySubMenu2 {
-//            "My submenu2 name",
-//            "my submenu2 description"
-//    };
+
+    dbg::SubMenu mySubMenu2 {
+            "My submenu2 name",
+            "my submenu2 description",
+            {
+                
+            }
+    };
 
     ////////////////////////////////////////
     //            MY MENU
@@ -179,7 +184,8 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
             "MY Menu name",
             "my menu description",
             {
-                    mySubMenu1
+                    mySubMenu1,
+                    mySubMenu2
             }
     };
 

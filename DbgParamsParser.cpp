@@ -77,6 +77,10 @@ namespace {
     }
 }
 
+    uint8_t GetNumOfParams() {
+        return Args::Inst().GetNumOfParams();
+    }
+
     template <typename T>
     T GetParam() { /* todo: print error - type not implemented */ }
 

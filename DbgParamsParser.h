@@ -18,6 +18,8 @@ namespace dbg {
         hex(const int64_t value) : Value{value} { }
     };
 
+    uint8_t GetNumOfParams();
+
     template <typename T>
     T GetParam();
 

@@ -135,7 +135,11 @@ namespace dbg {
                 NamedEntity(name, description),
                 m_Commands{cmds}
         {
-            _BuildPrintStr();
+            if ( ! m_Commands.empty() ) {
+                _BuildPrintStr();
+                return;
+            }
+            m_DisplayStr = "=== EMPTY SUB-MENU: " + m_Name + " ===\n";
         }
 
         /**
@@ -144,6 +148,10 @@ namespace dbg {
          * @return true if command name found in this sub menu, false otherwise
          */
         bool ExecuteCommandIfExist(const std::string & cmdName) const {
+
+            if (m_Commands.empty()) {
+                return false;
+            }
 
             // by default find by name
             std::function<bool(const Command&)> comparatorFunc = [cmdName](const Command& cmd) {

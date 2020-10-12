@@ -32,17 +32,17 @@ namespace dbg {
 
             std::stringstream ss;
 
-            _AddSubMenuHeader(ss, maxSubMenuWidth);
+            _AddMenuHeader(ss, maxSubMenuWidth);
 
             std::for_each(m_SubMenus.begin(), m_SubMenus.end(),
                     [&ss](const SubMenu subMenu){ ss << subMenu; });
 
-            _AddSubMenuFooter(ss, maxSubMenuWidth);
+            _AddMenuFooter(ss, maxSubMenuWidth);
 
             m_DisplayStr = ss.str();
         }
 
-        void _AddSubMenuHeader(std::stringstream & ss, const uint16_t maxSubMenuWidth) {
+        void _AddMenuHeader(std::stringstream &ss, const uint16_t maxSubMenuWidth) {
 
             // add title top border
             ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
@@ -58,10 +58,18 @@ namespace dbg {
             // add border chars after sub menu name
             ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
 
+            // add 2 for space before and after the name
+            const size_t subMenuDescriptionLen = m_Description.size() + 2;
+            const size_t subMenuDescriptionPadding = (maxSubMenuWidth / 2) - (subMenuDescriptionLen / 2);
+            // add spaces before sub menu name
+            ss << std::string(subMenuDescriptionPadding, ' ');
+
+            ss << " " <<  m_Description << "\n\n";
+
             m_DisplayStr = ss.str();
         }
 
-        void _AddSubMenuFooter(std::stringstream & ss, const uint16_t maxSubMenuWidth) {
+        void _AddMenuFooter(std::stringstream &ss, const uint16_t maxSubMenuWidth) {
             ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
             ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
         }
@@ -73,15 +81,22 @@ namespace dbg {
              NamedEntity(name, description),
              m_SubMenus{subMenus}
              {
-                 _BuildPrintStr();
+                 if ( ! m_SubMenus.empty() ) {
+                     _BuildPrintStr();
+                     return;
+                 }
+                 m_DisplayStr = "=== EMPTY MENU: " + m_Name + " ===\n";
              }
 
-         /**
-          * Execute command
-          * @param cmdName - the name of the command to execute (must be unique)
-          * @return - true if found command to execute, false otherwise
-          */
+        /**
+         * Execute command
+         * @param cmdName - the name of the command to execute (must be unique)
+         * @return - true if found command to execute, false otherwise
+         */
         bool ExecuteCommand(const std::string & cmdName) const {
+            if (m_SubMenus.empty()) {
+                return false;
+            }
             for (const auto subMenu : m_SubMenus) {
                 if (subMenu.ExecuteCommandIfExist(cmdName)) {
                     return true;

@@ -8,7 +8,7 @@
 //todo: write tests for getting params of bad strings line "sdf 98 1" or strings where length doesnt match the num of args in the string
 //todo: write test for trying to get more args than exist
 //todo: add colors to printings
-
+//todo: print temp error with printf for all the errors todo: and test them
 
 int main() {
 

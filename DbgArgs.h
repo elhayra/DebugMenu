@@ -34,6 +34,7 @@ namespace dbg {
 
         std::string GetNext();
 
+        uint8_t GetNumOfParams() const { return m_NumOfParams; }
     };
 
 
