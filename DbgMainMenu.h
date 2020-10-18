@@ -32,11 +32,13 @@ namespace dbg {
             m_Menus.push_back(menu);
         }
 
-        void ExecuteCommand(const std::string & cmdName, const char * params = nullptr, const uint8_t numParams = 0) const {
-            dbg::Args::Inst().SetArgs(params, numParams);
+        void ExecuteCommand(const std::string & cmdName, const char * params = nullptr) const {
+            dbg::Args::Inst().SetArgs(params);
 
             for (const auto & menu : m_Menus) {
-                menu.ExecuteCommand(cmdName);
+                if (menu.ExecuteCommand(cmdName)) {
+                    return;
+                }
             }
         }
 

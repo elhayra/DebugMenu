@@ -10,6 +10,8 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include "DbgArgs.h"
+
 
 namespace dbg {
     class Command {
@@ -18,7 +20,7 @@ namespace dbg {
         const uint16_t m_Id;
         const std::string m_Name;
         const std::string m_Description;
-        std::function<void()> m_Callback;
+        std::function<bool()> m_Callback;
         const std::vector<Param> m_Params;
 
         size_t m_PrintedNameLen{0};
@@ -47,7 +49,7 @@ namespace dbg {
         Command(const std::string &name,
                 const std::string &description,
                 const std::vector<Param> &params,
-                const std::function<void()> &callback) :
+                const std::function<bool()> &callback) :
                 m_Id{m_IdGen++},
                 m_Name{name},
                 m_Description{description},
@@ -82,12 +84,18 @@ namespace dbg {
         uint16_t Id() const { return m_Id; }
         std::string Name() const { return m_Name; }
 
-        void operator()() const {
-            if (m_Callback) {
-                m_Callback();
-            } else {
-               //print error, callback wasn't assigned
+        bool operator()() const {
+            auto a = Args::Inst().GetNumOfParams();
+            auto b = m_Params.size();
+            if (Args::Inst().GetNumOfParams() != m_Params.size()) {
+                //todo: print error
+                return false;
             }
+            if (m_Callback) {
+                return m_Callback();
+            }
+           //todo: print error, callback wasn't assigned
+           return false;
         }
 
 

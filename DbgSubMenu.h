@@ -23,6 +23,8 @@
 //todo: if command is bigger than one line width, print error.
 //todo: if command already exist, print error
 //todo: move all impl code to cpp
+//todo: automatically print command help menu if params are wrong or num of params is wrong
+//todo: move includes and impl code  to the right place in cpp file
 
 
 namespace dbg {
@@ -167,6 +169,7 @@ namespace dbg {
                     //todo: print error - conversion to int failed
                     return false;
                 }
+                // if starts with '!' find by id
                 comparatorFunc = [&inputCmdId](const Command& cmd) {
                     return cmd.Id() == inputCmdId;
                 };

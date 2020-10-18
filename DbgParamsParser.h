@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 //todo: write macros to assert params boundaries and print auto error with numbers in case failed
 

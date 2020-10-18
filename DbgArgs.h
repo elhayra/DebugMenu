@@ -11,12 +11,15 @@ namespace dbg {
     class Args {
     private:
         const char * m_CharsArr {nullptr};
+        size_t m_CharsArrSize {0};
         uint8_t m_NumOfParams {0};
         uint8_t m_CurrentParam {0};
         uint16_t m_CurrentIndex {0};
 
         Args() = default;
         ~Args() = default;
+
+        uint8_t _CountParams() const ;
 
     public:
         Args(const Args &) = delete;
@@ -30,7 +33,7 @@ namespace dbg {
             return args;
         }
 
-        void SetArgs(const char * charsArr, uint8_t numOfParams);
+        void SetArgs(const char * charsArr);
 
         std::string GetNext();
 

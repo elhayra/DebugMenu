@@ -17,8 +17,9 @@
 // automatic "pretty printer" including spacing, padding, headlines and extendable screen width
 
 
-void f() {
+bool f() {
     std::cout << "this is regular callback function" << std::endl;
+    return true;
 }
 
 dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
@@ -32,10 +33,10 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
 
     // define commands
     dbg::Command cmd1{
-            "command 1 name",
-            "command 1 description",
+            "command 1 name", // name
+            "command 1 description", // description
             { //params list
-                    { //param1
+                    { // param
                             "param 1 name",
                             "param1 descpription",
                             { //options list
@@ -43,7 +44,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                                     {"opt2 value", "opt2 name"} // value description is optional
                             }
                     },
-                    { // param2
+                    { // param
 
                             "param 1 name",
                             "param1 descpription"
@@ -58,6 +59,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                 std::string myName = dbg::GetParam<std::string>();
 
                 std::cout << "hello " << myName << ", this is my lambda function callback. got param value: " << (int)myParam1 << std::endl;
+                return true;
             }
     };
 
