@@ -8,8 +8,7 @@
 /**
  * Features
  * - add submenu name automatically
- * - validate uniqueness of each submenu name
- * - validate uniqueness of each command in submenu
+
  */
 
 //--------TODO---------
@@ -25,7 +24,15 @@
  * - bring "todo" from all other files to this spot
  *
  * - bring "features" from all other files to this spot
- * 
+ *
+ * - add printings for Command and test that it looks good with the description and params
+ *
+ * - if command fails because of wrong params, print help automatically
+ *
+ * - validate uniqueness of each submenu name
+ *
+ * - validate uniqueness of each command in submenu
+ *
  */
 //--------BUGS----------
 /**
