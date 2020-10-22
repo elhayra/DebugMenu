@@ -3,4 +3,4 @@ project(debug_menu)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(debug_menu main.cpp DbgParamsParser.cpp DbgParamsParser.h DbgArgs.cpp DbgArgs.h DbgCommand.cpp DbgCommand.h DbgParam.cpp DbgParam.h DbgMenu.cpp DbgMenu.h DbgNamedEntity.h DbgMainMenu.cpp DbgMainMenu.h DbgSubMenu.cpp DbgSubMenu.h MyExampleDebugMenu.cpp MyExampleDebugMenu.h DbgHistory.cpp DbgHistory.h DbgPrintSettings.h)
+add_executable(debug_menu main.cpp DbgParamsParser.cpp DbgParamsParser.h DbgArgs.cpp DbgArgs.h DbgCommand.cpp DbgCommand.h DbgParam.cpp DbgParam.h DbgMenu.cpp DbgMenu.h DbgNamedEntity.h DbgMainMenu.cpp DbgMainMenu.h DbgSubMenu.cpp DbgSubMenu.h MyExampleDebugMenu.cpp MyExampleDebugMenu.h DbgPrintSettings.h)

@@ -6,27 +6,27 @@
 namespace dbg {
 
 
-    uint8_t Args::_CountParams() const {
-        uint16_t idx = 0;
-        bool seenSpace = true;
-        uint8_t numParams = 0;
-        while (idx < m_CharsArrSize) {
-           if (m_CharsArr[idx++] != ' ') {
-               if (seenSpace) {
-                   seenSpace = false;
-                   ++numParams;
-               }
-           } else {
-               seenSpace = true;
-           }
-        }
-        return numParams;
-    }
+//    uint8_t Args::_CountParams() const {
+//        uint16_t idx = 0;
+//        bool seenSpace = true;
+//        uint8_t numParams = 0;
+//        while (idx < m_CharsArrSize) {
+//           if (m_CharsArr[idx++] != ' ') {
+//               if (seenSpace) {
+//                   seenSpace = false;
+//                   ++numParams;
+//               }
+//           } else {
+//               seenSpace = true;
+//           }
+//        }
+//        return numParams;
+//    }
 
-    void Args::SetArgs(const char * charsArr) {
+    void Args::SetArgs(const char * charsArr, const uint8_t numParams) {
         m_CharsArrSize = std::strlen(charsArr);
         m_CharsArr = charsArr;
-        m_NumOfParams = _CountParams();
+        m_NumOfParams = numParams;
         m_CurrentParam = 0;
         m_CurrentIndex = 0;
     }

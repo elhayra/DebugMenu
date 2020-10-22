@@ -19,7 +19,7 @@ namespace dbg {
         Args() = default;
         ~Args() = default;
 
-        uint8_t _CountParams() const ;
+//        uint8_t _CountParams() const ;
 
     public:
         Args(const Args &) = delete;
@@ -33,7 +33,7 @@ namespace dbg {
             return args;
         }
 
-        void SetArgs(const char * charsArr);
+        void SetArgs(const char * charsArr, const uint8_t numParams);
 
         std::string GetNext();
 

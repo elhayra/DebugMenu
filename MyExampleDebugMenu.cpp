@@ -33,7 +33,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
 
     // define commands
     dbg::Command cmd1{
-            "command 1 name", // name
+            "LaunchRockets", // name
             "command 1 description", // description
             { //params list
                     { // param
@@ -64,7 +64,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::Command cmd2{
-            "command 2 name",
+            "DoSomethingSillyPf",
             "command 2 description",
             { // params list
                     { //param1
@@ -86,7 +86,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::Command cmd3{
-            "123",
+            "MySuperZevikCommand",
             "command 2 description",
             { // params list
                     { //param1
@@ -108,7 +108,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::Command cmd4{
-            "12666666666666666666666666666666666666666666666666666666666",
+            "OverHeatCardToMax",
             "command 2 description",
             { // params list
                     { //param1
@@ -130,7 +130,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::Command cmd5{
-            "12345",
+            "MakeDevOpsScriptsRunSmoothly",
             "command 2 description",
             { // params list
                     { //param1
@@ -152,14 +152,56 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
 
+    dbg::Command cmd6{
+            "ConvertCaffeToCode",
+            "command 2 description",
+            { // params list
+                    { //param1
+                            "param 1 name",
+                            "param1 descpription",
+                            { //options list
+                                    {"opt1 value", "opt1 name", "opt1 description"},
+                                    {"opt2 value", "opt2 name"} // value description is optional
+                            }
+                    },
+                    { // param2
+
+                            "param 1 name",
+                            "param1 descpription"
+                            // option list is optional
+                    }
+            },
+            f  //regular function
+    };
 
 
+    dbg::Command cmd7{
+            "HackerMode",
+            "command 2 description",
+            { // params list
+                    { //param1
+                            "param 1 name",
+                            "param1 descpription",
+                            { //options list
+                                    {"opt1 value", "opt1 name", "opt1 description"},
+                                    {"opt2 value", "opt2 name"} // value description is optional
+                            }
+                    },
+                    { // param2
+
+                            "param 1 name",
+                            "param1 descpription"
+                            // option list is optional
+                    }
+            },
+            f  //regular function
+    };
     ////////////////////////////////////////
     //           SUB MENUES
     ////////////////////////////////////////
 
     dbg::SubMenu mySubMenu1 {
-            "My submenu1 name",
+            "PutinMenu",
             "my submenu1 description",
             {
                 cmd1,
@@ -171,23 +213,34 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::SubMenu mySubMenu2 {
-            "My submenu2 name",
+            "TuringMachine",
             "my submenu2 description",
             {
-                
+                cmd6,
+                cmd7
             }
     };
+
+    dbg::SubMenu mySubMenu3 {
+            "MyMenuWithNothing",
+            "my submenu2 description",
+            {
+
+            }
+    };
+
 
     ////////////////////////////////////////
     //            MY MENU
     ////////////////////////////////////////
 
     dbg::Menu myMenu{
-            "MY Menu name",
+            "MyMenu",
             "my menu description",
             {
                     mySubMenu1,
-                    mySubMenu2
+                    mySubMenu2,
+                    mySubMenu3
             }
     };
 

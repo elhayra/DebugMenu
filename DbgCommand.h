@@ -18,7 +18,7 @@ namespace dbg {
     private:
         static uint16_t m_IdGen;
         const uint16_t m_Id;
-        const std::string m_Name;
+        std::string m_Name;
         const std::string m_Description;
         std::function<bool()> m_Callback;
         const std::vector<Param> m_Params;
@@ -42,7 +42,7 @@ namespace dbg {
             // add 3 chars:
             // 2 - for the "[" before and after "]" the id,
             // 1 - for the space after the "]"
-            m_PrintedNameLen = m_PrintedNameLen = idLen + m_Name.size() + 3;
+            m_PrintedNameLen = idLen + m_Name.size() + 3;
         }
 
     public:
@@ -56,7 +56,6 @@ namespace dbg {
                 m_Params{params},
                 m_Callback{callback}
                 {
-                    _CalculatePrintedNameLen();
                 }
 
         Command(const Command& other) :
@@ -80,9 +79,21 @@ namespace dbg {
         }
 
 
-        size_t GetPrintedNameLen() const { return m_PrintedNameLen; }
+        size_t GetPrintedNameLen() const {
+            if (m_PrintedNameLen == 0) { // not initialized
+                //todo: print error
+            }
+            return m_PrintedNameLen;
+        }
+
         uint16_t Id() const { return m_Id; }
+
         std::string Name() const { return m_Name; }
+
+        void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
+            m_Name = subMenuName + m_Name;
+            _CalculatePrintedNameLen();
+        }
 
         bool operator()() const {
             auto a = Args::Inst().GetNumOfParams();
@@ -98,7 +109,11 @@ namespace dbg {
            return false;
         }
 
-
+        bool operator==(const Command& other) const {
+            return ((&other == this) ||
+                    (other.Name() == this->Name()) ||
+                    (other.Id() == this->Id()));
+        }
     };
 
     std::ostream &operator<<(std::ostream & output, const dbg::Command& cmd);
