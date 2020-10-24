@@ -20,8 +20,8 @@ namespace dbg {
     public:
        Option(const std::string & value, const std::string & name, const std::string & descp = "") :
             m_Value{value},
-           PrintableEntity(name, descp){ _BuildDisplayString(); }
-        void _BuildDisplayString() override {
+           PrintableEntity(name, descp){ BuildDisplayString(); }
+        void BuildDisplayString(const size_t maxWidth = 0) {
            m_DisplayStr = '[' + m_Value + "] <" + m_Name + '>';
            if ( ! m_Description.empty() ) {
                m_DisplayStr += " - " + m_Description;
@@ -39,9 +39,9 @@ namespace dbg {
                 const std::vector<Option> & options = std::vector<Option>()) :
                     PrintableEntity(name, description),
                     m_Options{options}
-                    { }
+                    { BuildDisplayString(); }
 
-        void _BuildDisplayString() override {
+        void BuildDisplayString(const size_t maxWidth = 0) override {
             m_DisplayStr = '<' + m_Name + "> - " + m_Description + '\n';
             if (m_Options.empty()) {return;}
             for (const auto option : m_Options) {
@@ -54,13 +54,3 @@ namespace dbg {
 
 
 #endif //DEBUG_MENU_DBGPARAM_H
-//    AddParam(
-//        "param name",
-//        "descp",
-//        {
-//            "option 1 for that param",
-//            "option 2 for that param",
-//            "option 3 for that param",
-//            ...
-//        }
-//    )

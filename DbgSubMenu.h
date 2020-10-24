@@ -6,9 +6,10 @@
 
 #include "DbgCommand.h"
 #include "DbgPrintableEntity.h"
+#include "DbgPrintSettings.h"
 
 
-
+#include <array>
 
 
 
@@ -20,11 +21,17 @@ namespace dbg {
 
         std::vector<Command> m_Commands;
 
-        void _BuildDisplayString() override;
+        // hold commands reference if the a table format
+        std::vector<std::array<const Command*, DBG_NUM_CMD_IN_ROW>> m_CmdMatrix;
+
+        // hold max command length in each column
+        std::array<size_t, DBG_NUM_CMD_IN_ROW> m_ColsMaxWidth {0};
 
         void _AddSubMenuHeader(std::stringstream & ss);
 
         void _AddSubMenuFooter(std::stringstream & ss);
+
+        void _FillCmdMatrix();
 
     public:
         SubMenu(const std::string & name,
@@ -37,6 +44,9 @@ namespace dbg {
          * @return true if command name found in this sub menu, false otherwise
          */
         bool ExecuteCommandIfExist(const std::string & cmdName) const ;
+
+        void BuildDisplayString(const size_t maxWidth) override;
+
     };
 
 }

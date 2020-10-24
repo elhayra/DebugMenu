@@ -19,13 +19,26 @@ namespace dbg {
               m_Name{name},
               m_Description{description} {  }
 
-        virtual void _BuildDisplayString() = 0;
 
     public:
         virtual ~PrintableEntity() = default;
+
+        /**
+         * Build display string
+         */
+        virtual void BuildDisplayString(const size_t maxWidth) = 0;
+
+        /**
+         * @return sub-element with maximum width
+         */
+        virtual size_t GetSubElementWithMaxWidth() const { return 0; }
+
         std::string Name() const { return m_Name; }
+
         std::string Display() const { return m_DisplayStr; }
+
         std::string Description() const { return m_Description; }
+
         size_t Width() const {
             if (m_Width == 0) { // not initialized
                 printf("error: %s\n", __PRETTY_FUNCTION__);

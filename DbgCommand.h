@@ -23,10 +23,7 @@ namespace dbg {
         const std::vector<Param> m_Params;
 
 
-        void _BuildDisplayString() override {
-            m_DisplayStr = '[' + std::to_string(Id()) + "]-" + Name();
-            m_Width = m_DisplayStr.size();
-        }
+
 
     public:
         Command(const std::string &name,
@@ -60,7 +57,11 @@ namespace dbg {
 
         void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
             m_Name = subMenuName + m_Name;
-            _BuildDisplayString();
+        }
+
+        void BuildDisplayString(const size_t maxWidth = 0) override {
+            m_DisplayStr = '[' + std::to_string(Id()) + "]-" + Name();
+            m_Width = m_DisplayStr.size();
         }
 
         bool operator()() const {

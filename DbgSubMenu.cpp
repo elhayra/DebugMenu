@@ -1,11 +1,9 @@
 
 #include "DbgSubMenu.h"
-#include "DbgPrintSettings.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
-#include <array>
 #include <algorithm>
 
 
@@ -17,45 +15,26 @@ namespace dbg {
             PrintableEntity(name, description),
             m_Commands{cmds}
     {
-//            m_DisplayStr = "=== EMPTY SUB-MENU: " + m_Name + " ===\n";
-//            m_Width = m_DisplayStr.size();
-//            return;
-//        }
+        if ( ! m_Commands.empty() ) {
+            for (auto &cmd : m_Commands) {
+                cmd.BuildDisplayString();
+            }
 
-    if ( ! m_Commands.empty() ) {
-        for (auto &cmd : m_Commands) {
-            // add the name of this submenu as prefix of all its commands
-            cmd.AddSubMenuNameAsPrefix(m_Name);
-            //validate that this command is unique
-//            const auto itr = std::find(m_Commands.begin(), m_Commands.end(), cmd);
-//            if (itr != std::end(m_Commands)) { // command already exist in this submenu
-////                //todo: print error , command already exist in submenu
-////                return;
-//            }
+            _FillCmdMatrix();
         }
     }
 
 
-        _BuildDisplayString();
-    }
-
-    void SubMenu::_BuildDisplayString() {
-
-        std::stringstream ss;
-
-
-        std::vector<std::array<const Command*, DBG_NUM_CMD_IN_ROW>> cmdMatrix;
-
-        cmdMatrix.push_back({nullptr}); // insert first row
+    void SubMenu::_FillCmdMatrix() {
+        m_CmdMatrix.push_back({nullptr}); // insert first row
 
         uint8_t lineIdx = 0;
         uint8_t cmdIdx = 0;
 
-        // hold max command length in each column
-        std::array<size_t, DBG_NUM_CMD_IN_ROW> colsMaxWidth{0};
+
 
         auto startNewLine = [&]() {
-            cmdMatrix.push_back({nullptr});
+            m_CmdMatrix.push_back({nullptr});
             ++lineIdx;
         };
 
@@ -65,11 +44,11 @@ namespace dbg {
             const uint8_t cmdColIdx = cmdIdx % DBG_NUM_CMD_IN_ROW;
 
             if (cmdColIdx < DBG_NUM_CMD_IN_ROW) { // don't exceed num of allowed cmds in a row
-                cmdMatrix.at(lineIdx).at(cmdColIdx) = &cmd; // add cmd to current line
+                m_CmdMatrix.at(lineIdx).at(cmdColIdx) = &cmd; // add cmd to current line
                 // find max command length in each column, later
                 // will be used to determine column spaces
                 const size_t cmdCharsLen = cmd.Width();
-                colsMaxWidth.at(cmdColIdx) = std::max(cmdCharsLen, colsMaxWidth.at(cmdColIdx));
+                m_ColsMaxWidth.at(cmdColIdx) = std::max(cmdCharsLen, m_ColsMaxWidth.at(cmdColIdx));
 
                 ++cmdIdx;
 
@@ -83,19 +62,28 @@ namespace dbg {
         }
 
         // calculate screen width
-        for (const auto colWidth : colsMaxWidth) {
+        for (const auto colWidth : m_ColsMaxWidth) {
             m_Width += colWidth; // add cols widths
         }
         // add cols spacers: we have N commands that are separated by N-1 spacers
         m_Width += (DBG_NUM_CMD_SPACE_CHRS * (DBG_NUM_CMD_IN_ROW-1));
+    }
+
+    void SubMenu::BuildDisplayString(const size_t maxWidth) {
+
+        std::stringstream ss;
+
+        // if there is a sub-menu with larger width than this sub menu, use
+        // it's width so when printing sub menus they all have the same width
+        m_Width = std::max(Width(), maxWidth);
 
         _AddSubMenuHeader(ss);
 
-        for (const auto & line : cmdMatrix) {
+        for (const auto & line : m_CmdMatrix) {
             for (uint8_t cmdIdx = 0; cmdIdx < DBG_NUM_CMD_IN_ROW; ++cmdIdx) {
                 if (line.at(cmdIdx) != nullptr) {
                     const Command & cmd = *(line.at(cmdIdx));
-                    const uint8_t spaces = colsMaxWidth.at(cmdIdx) - cmd.Width();
+                    const uint8_t spaces = m_ColsMaxWidth.at(cmdIdx) - cmd.Width();
                     ss << cmd << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
                 }
             }

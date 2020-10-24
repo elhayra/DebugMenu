@@ -16,48 +16,30 @@ namespace dbg {
 
     class Menu : public PrintableEntity {
     private:
-        const std::vector<SubMenu> m_SubMenus;
+        std::vector<SubMenu> m_SubMenus;
 
 
-        void _BuildDisplayString() override {
 
-            // calculate maximum sub menu width
-            size_t maxSubMenuWidth = 0;
-            for (const auto & subMenu : m_SubMenus) {
-                maxSubMenuWidth = std::max(maxSubMenuWidth, subMenu.Width());
-            }
 
-            std::stringstream ss;
-
-            _AddMenuHeader(ss, maxSubMenuWidth);
-
-            std::for_each(m_SubMenus.begin(), m_SubMenus.end(),
-                    [&ss](const SubMenu subMenu){ ss << subMenu; });
-
-            _AddMenuFooter(ss, maxSubMenuWidth);
-
-            m_DisplayStr = ss.str() + '\n';
-        }
-
-        void _AddMenuHeader(std::stringstream &ss, const uint16_t maxSubMenuWidth) {
+        void _AddMenuHeader(std::stringstream &ss, const uint16_t maxWidth) {
 
             // add title top border
-            ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
+            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
 
             // add 2 for space before and after the name
             const size_t subMenuNameLen = m_Name.size() + 2;
-            const size_t subMenuNamePadding = (maxSubMenuWidth / 2) - (subMenuNameLen / 2);
+            const size_t subMenuNamePadding = (maxWidth / 2) - (subMenuNameLen / 2);
             // add spaces before sub menu name
             ss << std::string(subMenuNamePadding, ' ');
 
             ss << " " <<  m_Name << '\n';
 
             // add border chars after sub menu name
-            ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
+            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
 
             // add 2 for space before and after the name
             const size_t subMenuDescriptionLen = m_Description.size() + 2;
-            const size_t subMenuDescriptionPadding = (maxSubMenuWidth / 2) - (subMenuDescriptionLen / 2);
+            const size_t subMenuDescriptionPadding = (maxWidth / 2) - (subMenuDescriptionLen / 2);
             // add spaces before sub menu name
             ss << std::string(subMenuDescriptionPadding, ' ');
 
@@ -66,9 +48,9 @@ namespace dbg {
             m_DisplayStr = ss.str();
         }
 
-        void _AddMenuFooter(std::stringstream &ss, const uint16_t maxSubMenuWidth) {
-            ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
-            ss << std::string(maxSubMenuWidth, DBG_MENU_BORDER) << '\n';
+        void _AddMenuFooter(std::stringstream &ss, const uint16_t maxWidth) {
+            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
+            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
         }
 
     public:
@@ -78,11 +60,7 @@ namespace dbg {
              PrintableEntity(name, description),
              m_SubMenus{subMenus}
              {
-                 if ( ! m_SubMenus.empty() ) {
-                     _BuildDisplayString();
-                     return;
-                 }
-                 m_DisplayStr = "=== EMPTY MENU: " + m_Name + " ===\n";
+                m_Width = GetSubElementWithMaxWidth();
              }
 
         /**
@@ -100,6 +78,33 @@ namespace dbg {
                 }
             }
             return false;
+        }
+
+        size_t GetSubElementWithMaxWidth() const override {
+            // find sub menu with biggest width
+            const auto subMenuWithMaxWidth = std::max_element(m_SubMenus.begin(), m_SubMenus.end(),
+                  [](const SubMenu& subMenu1, const SubMenu& subMenu2) {
+                      return subMenu1.Width() < subMenu2.Width();
+                  }
+            );
+
+            return subMenuWithMaxWidth->Width();
+        }
+
+        void BuildDisplayString(const size_t maxWidth) override {
+
+            std::stringstream ss;
+
+            _AddMenuHeader(ss, maxWidth);
+
+//            std::for_each(m_SubMenus.begin(), m_SubMenus.end(), [&](SubMenu& submenu){
+//                submenu.BuildDisplayString(maxWidth);
+//                ss << submenu; });
+
+
+            _AddMenuFooter(ss, maxWidth);
+
+            m_DisplayStr = ss.str() + '\n';
         }
 
     };
