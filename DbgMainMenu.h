@@ -22,24 +22,7 @@ namespace dbg {
         ~MainMenu() = default;
 
 
-        void BuildDisplayString(const size_t maxWidth = 0) override {
-            std::stringstream ss;
 
-            // find the widest menu
-            const auto menuWithMaxWidth = std::max_element(m_Menus.begin(), m_Menus.end(),
-                  [](const Menu& menu1, const Menu& menu2) {
-                      return menu1.Width() < menu2.Width();
-                  }
-            );
-
-            // rebuild all menus based on the new max width
-            for (auto & menu : m_Menus) {
-                menu.BuildDisplayString(menuWithMaxWidth->Width());
-                ss << menu;
-            }
-
-            std::for_each(m_Menus.begin(), m_Menus.end(), [](const Menu & menu){std::cout << menu;});
-        }
 
     public:
         MainMenu(MainMenu const &) = delete;
@@ -58,7 +41,7 @@ namespace dbg {
          */
         void AddMenu(const Menu & menu) {
             m_Menus.push_back(menu);
-            BuildDisplayString();
+            Print();
         }
 
         void ExecuteCommand(const std::string & cmdName, const char * params, const uint8_t numParams) const {
@@ -72,6 +55,20 @@ namespace dbg {
         }
 
 
+        void Print(const size_t maxWidth = 0) const override {
+            std::stringstream ss;
+
+            // find the widest menu
+            const auto menuWithMaxWidth = std::max_element(m_Menus.begin(), m_Menus.end(),
+                                                           [](const Menu& menu1, const Menu& menu2) {
+                                                               return menu1.Width() < menu2.Width();
+                                                           }
+            );
+
+            for (auto & menu : m_Menus) {
+                menu.Print(menuWithMaxWidth->Width());
+            }
+        }
 
 
     };

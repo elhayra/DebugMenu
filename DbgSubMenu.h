@@ -27,9 +27,9 @@ namespace dbg {
         // hold max command length in each column
         std::array<size_t, DBG_NUM_CMD_IN_ROW> m_ColsMaxWidth {0};
 
-        void _AddSubMenuHeader(std::stringstream & ss);
+        void _PrintSubMenuHeader(const size_t maxWidth) const ;
 
-        void _AddSubMenuFooter(std::stringstream & ss);
+        void _PrintSubMenuFooter(const size_t maxWidth) const ;
 
         void _FillCmdMatrix();
 
@@ -45,7 +45,7 @@ namespace dbg {
          */
         bool ExecuteCommandIfExist(const std::string & cmdName) const ;
 
-        void BuildDisplayString(const size_t maxWidth) override;
+        void Print(const size_t maxWidth) const override;
 
     };
 

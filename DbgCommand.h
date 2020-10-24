@@ -35,6 +35,7 @@ namespace dbg {
                 m_Params{params},
                 m_Callback{callback}
         {
+            m_Width = m_Name.size();
         }
 
         Command(const Command& other) :
@@ -43,6 +44,7 @@ namespace dbg {
                 m_Params{other.m_Params},
                 m_Callback{other.m_Callback}
         {
+            m_Width = m_Name.size();
         }
 
         Command(const Command&& other) :
@@ -51,6 +53,7 @@ namespace dbg {
             m_Params(std::move(other.m_Params)),
             m_Callback{std::move(other.m_Callback)}
         {
+            m_Width = m_Name.size();
         }
 
         uint16_t Id() const { return m_Id; }
@@ -59,9 +62,8 @@ namespace dbg {
             m_Name = subMenuName + m_Name;
         }
 
-        void BuildDisplayString(const size_t maxWidth = 0) override {
-            m_DisplayStr = '[' + std::to_string(Id()) + "]-" + Name();
-            m_Width = m_DisplayStr.size();
+        void Print(const size_t maxWidth = 0) const override {
+            std::cout << '[' + std::to_string(Id()) + "]-" + Name();
         }
 
         bool operator()() const {

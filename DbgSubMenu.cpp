@@ -17,7 +17,7 @@ namespace dbg {
     {
         if ( ! m_Commands.empty() ) {
             for (auto &cmd : m_Commands) {
-                cmd.BuildDisplayString();
+                cmd.Print();
             }
 
             _FillCmdMatrix();
@@ -69,52 +69,49 @@ namespace dbg {
         m_Width += (DBG_NUM_CMD_SPACE_CHRS * (DBG_NUM_CMD_IN_ROW-1));
     }
 
-    void SubMenu::BuildDisplayString(const size_t maxWidth) {
+    void SubMenu::Print(const size_t maxWidth) const {
 
-        std::stringstream ss;
+        std::cout << std::endl;
 
-        // if there is a sub-menu with larger width than this sub menu, use
-        // it's width so when printing sub menus they all have the same width
-        m_Width = std::max(Width(), maxWidth);
-
-        _AddSubMenuHeader(ss);
+        _PrintSubMenuHeader(maxWidth);
 
         for (const auto & line : m_CmdMatrix) {
             for (uint8_t cmdIdx = 0; cmdIdx < DBG_NUM_CMD_IN_ROW; ++cmdIdx) {
                 if (line.at(cmdIdx) != nullptr) {
                     const Command & cmd = *(line.at(cmdIdx));
                     const uint8_t spaces = m_ColsMaxWidth.at(cmdIdx) - cmd.Width();
-                    ss << cmd << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
+                    cmd.Print();
+                    std::cout << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
                 }
             }
-            ss << '\n';
+            std::cout << std::endl;
         }
 
-        _AddSubMenuFooter(ss);
+        _PrintSubMenuFooter(maxWidth);
 
-        m_DisplayStr = '\n' + ss.str() + '\n';
+        std::cout << std::endl;
     }
 
-    void SubMenu::_AddSubMenuHeader(std::stringstream & ss) {
+    void SubMenu::_PrintSubMenuHeader(const size_t maxWidth) const {
         // add 2 for space before and after the name
         const size_t subMenuNameLen = m_Name.size() + 2;
 
         size_t subMenuNamePadding = 0;
-        if (m_Width >= subMenuNameLen) {
-            subMenuNamePadding = (m_Width / 2) - (subMenuNameLen / 2);
+        if (maxWidth >= subMenuNameLen) {
+            subMenuNamePadding = (maxWidth / 2) - (subMenuNameLen / 2);
         }
         // add border chars before sub menu name
-        ss << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR);
+        std::cout << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR);
 
-        ss << " " <<  m_Name << " ";
+        std::cout << " " <<  m_Name << " ";
 
         // add border chars after sub menu name
-        ss << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR) << '\n';
+        std::cout << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR) << '\n';
 
     }
 
-    void SubMenu::_AddSubMenuFooter(std::stringstream & ss) {
-        ss << std::string(m_Width, DBG_SUB_MENU_BORDER_CHAR) << '\n';
+    void SubMenu::_PrintSubMenuFooter(const size_t maxWidth) const {
+        std::cout << std::string(maxWidth, DBG_SUB_MENU_BORDER_CHAR) << '\n';
     }
 
 

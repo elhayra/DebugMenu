@@ -8,7 +8,7 @@
 
 #include <string>
 #include <vector>
-
+#include <iostream>
 
 namespace dbg {
 
@@ -20,11 +20,11 @@ namespace dbg {
     public:
        Option(const std::string & value, const std::string & name, const std::string & descp = "") :
             m_Value{value},
-           PrintableEntity(name, descp){ BuildDisplayString(); }
-        void BuildDisplayString(const size_t maxWidth = 0) {
-           m_DisplayStr = '[' + m_Value + "] <" + m_Name + '>';
+           PrintableEntity(name, descp){ Print(); }
+        void Print(const size_t maxWidth = 0) const override {
+           std::cout << '[' + m_Value + "] <" + m_Name + '>';
            if ( ! m_Description.empty() ) {
-               m_DisplayStr += " - " + m_Description;
+               std::cout << " - " + m_Description;
            }
        }
     };
@@ -39,13 +39,14 @@ namespace dbg {
                 const std::vector<Option> & options = std::vector<Option>()) :
                     PrintableEntity(name, description),
                     m_Options{options}
-                    { BuildDisplayString(); }
+                    { Print(); }
 
-        void BuildDisplayString(const size_t maxWidth = 0) override {
-            m_DisplayStr = '<' + m_Name + "> - " + m_Description + '\n';
+        void Print(const size_t maxWidth = 0) const override {
+            std::cout << '<' + m_Name + "> - " + m_Description + '\n';
             if (m_Options.empty()) {return;}
             for (const auto option : m_Options) {
-                m_DisplayStr += '\t' + option.Display() + '\n';
+                option.Print();
+                std::cout << std::endl;
             }
         }
     };

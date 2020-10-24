@@ -21,36 +21,34 @@ namespace dbg {
 
 
 
-        void _AddMenuHeader(std::stringstream &ss, const uint16_t maxWidth) {
+        void _AddMenuHeader(const size_t maxWidth) const {
 
             // add title top border
-            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
+            std::cout << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
 
             // add 2 for space before and after the name
             const size_t subMenuNameLen = m_Name.size() + 2;
             const size_t subMenuNamePadding = (maxWidth / 2) - (subMenuNameLen / 2);
             // add spaces before sub menu name
-            ss << std::string(subMenuNamePadding, ' ');
+            std::cout << std::string(subMenuNamePadding, ' ');
 
-            ss << " " <<  m_Name << '\n';
+            std::cout << " " <<  m_Name << '\n';
 
             // add border chars after sub menu name
-            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
+            std::cout << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
 
             // add 2 for space before and after the name
             const size_t subMenuDescriptionLen = m_Description.size() + 2;
             const size_t subMenuDescriptionPadding = (maxWidth / 2) - (subMenuDescriptionLen / 2);
             // add spaces before sub menu name
-            ss << std::string(subMenuDescriptionPadding, ' ');
+            std::cout << std::string(subMenuDescriptionPadding, ' ');
 
-            ss << " " <<  m_Description << "\n\n";
-
-            m_DisplayStr = ss.str();
+            std::cout << " " <<  m_Description << "\n\n";
         }
 
-        void _AddMenuFooter(std::stringstream &ss, const uint16_t maxWidth) {
-            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
-            ss << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
+        void _AddMenuFooter(const size_t maxWidth) const {
+            std::cout << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
+            std::cout << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
         }
 
     public:
@@ -91,20 +89,15 @@ namespace dbg {
             return subMenuWithMaxWidth->Width();
         }
 
-        void BuildDisplayString(const size_t maxWidth) override {
+        void Print(const size_t maxWidth) const override {
 
-            std::stringstream ss;
+            _AddMenuHeader(maxWidth);
 
-            _AddMenuHeader(ss, maxWidth);
+            std::for_each(m_SubMenus.begin(), m_SubMenus.end(), [&](const SubMenu& submenu){ submenu.Print(maxWidth); });
 
-//            std::for_each(m_SubMenus.begin(), m_SubMenus.end(), [&](SubMenu& submenu){
-//                submenu.BuildDisplayString(maxWidth);
-//                ss << submenu; });
+            _AddMenuFooter(maxWidth);
 
-
-            _AddMenuFooter(ss, maxWidth);
-
-            m_DisplayStr = ss.str() + '\n';
+            std::cout << std::endl;
         }
 
     };

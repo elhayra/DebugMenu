@@ -95,7 +95,7 @@ int main() {
     // I could count the params automatically, but we already get them from the current implementation
     dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
 
-    std::cout << dbg::MainMenu::Instance() << std::endl;
+    dbg::MainMenu::Instance().Print();
 
     return 0;
 }

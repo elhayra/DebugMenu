@@ -6,8 +6,5 @@
 
 namespace dbg {
 
-    std::ostream &operator<<(std::ostream & output, const dbg::PrintableEntity& printable) {
-        output << printable.Display();
-        return output;
-    }
+
 }
