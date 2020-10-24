@@ -16,7 +16,7 @@
 namespace dbg {
 
 
-    class Menu : public NamedEntity{
+    class Menu : public PrintableEntity{
     private:
         const std::vector<SubMenu> m_SubMenus;
 
@@ -78,7 +78,7 @@ namespace dbg {
         Menu(const std::string & name,
              const std::string & description,
              const std::vector<SubMenu> & subMenus) :
-             NamedEntity(name, description),
+             PrintableEntity(name, description),
              m_SubMenus{subMenus}
              {
                  if ( ! m_SubMenus.empty() ) {

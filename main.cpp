@@ -6,14 +6,16 @@
 
 
 /**
- * Features
+ * === Features ===
  * - add submenu name automatically
-
+// all declarations are done in place - no need to declare in header file
+// easy to use arguments parsing functions
+// valid number of params is checked automatically
+// automatic "pretty printer" including spacing, padding, headlines and extendable screen width
  */
 
 //--------TODO---------
 /**
- * - add error printings to all places with "todo"
  *
  * - all sub menues should be as long as the longest sub
  * menu (and the same for Menu), so drawing logic should be moved up to the *main* menu.
@@ -32,6 +34,30 @@
  * - validate uniqueness of each submenu name
  *
  * - validate uniqueness of each command in submenu
+ *
+//todo: write macros to assert params boundaries and print auto error with numbers in case failed
+
+//todo: if command already exist, print error
+//todo: automatically print command help menu if params are wrong or num of params is wrong
+//todo: move includes and impl code  to the right place in cpp file
+ *
+//todo: check params bound by user definition
+// todo; macros to create callback functions with description of the debug func and params boundaries
+//todo: auto padding in printing
+//todo: add option to add title to a group of commands
+// todo : add option to press a number to execute command
+//todo: add option to print verbose commands with the help lines
+//todo: automatically count the number of params user defined and compare to params received input
+//todo: apply bit error checking to all conversions
+//todo: user colors for menus, commands, options, outputs
+
+// parser prints errors internally
+// easier APIs to remember and use
+
+//todo: try to make the command structures simpler to use and write - first think how I want it to look like
+
+
+//todo: print error in case string is empty in the macro
  *
  */
 //--------BUGS----------

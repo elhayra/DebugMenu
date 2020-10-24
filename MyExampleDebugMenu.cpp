@@ -8,13 +8,7 @@
 
 #include <iostream>
 
-//todo: try to make the command structures simpler to use and write - first think how I want it to look like
 
-// == features ==
-// all declarations are done in place - no need to declare in header file
-// easy to use arguments parsing functions
-// valid number of params is checked automatically
-// automatic "pretty printer" including spacing, padding, headlines and extendable screen width
 
 
 bool f() {

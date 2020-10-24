@@ -11,19 +11,16 @@
 #include <iostream>
 #include <sstream>
 #include "DbgArgs.h"
+#include "DbgNamedEntity.h"
 
 
 namespace dbg {
-    class Command {
+    class Command : public PrintableEntity {
     private:
         static uint16_t m_IdGen;
         const uint16_t m_Id;
-        std::string m_Name;
-        const std::string m_Description;
         std::function<bool()> m_Callback;
         const std::vector<Param> m_Params;
-
-        size_t m_PrintedNameLen{0};
 
         /**
          * calculate full name (name + id) characters length
@@ -42,7 +39,7 @@ namespace dbg {
             // add 3 chars:
             // 2 - for the "[" before and after "]" the id,
             // 1 - for the space after the "]"
-            m_PrintedNameLen = idLen + m_Name.size() + 3;
+            m_Width = idLen + m_Name.size() + 3;
         }
 
     public:
@@ -50,45 +47,37 @@ namespace dbg {
                 const std::string &description,
                 const std::vector<Param> &params,
                 const std::function<bool()> &callback) :
+                PrintableEntity{name, description},
                 m_Id{m_IdGen++},
-                m_Name{name},
-                m_Description{description},
                 m_Params{params},
                 m_Callback{callback}
-                {
-                }
+        {
+        }
 
         Command(const Command& other) :
+                PrintableEntity{other.m_Name, other.m_Description},
                 m_Id{other.m_Id},
-                m_Name{other.m_Name},
-                m_Description{other.m_Description},
                 m_Params{other.m_Params},
-                m_Callback{other.m_Callback},
-                m_PrintedNameLen{other.m_PrintedNameLen}
+                m_Callback{other.m_Callback}
         {
         }
 
         Command(const Command&& other) :
+            PrintableEntity{std::move(other.m_Name), std::move(other.m_Description)},
             m_Id{other.m_Id},
-            m_Name{std::move(other.m_Name)},
-            m_Description{std::move(other.m_Description)},
             m_Params(std::move(other.m_Params)),
-            m_Callback{std::move(other.m_Callback)},
-            m_PrintedNameLen{other.m_PrintedNameLen}
+            m_Callback{std::move(other.m_Callback)}
         {
         }
 
-
         size_t GetPrintedNameLen() const {
-            if (m_PrintedNameLen == 0) { // not initialized
-                //todo: print error
+            if (m_Width == 0) { // not initialized
+                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error
             }
-            return m_PrintedNameLen;
+            return m_Width;
         }
 
         uint16_t Id() const { return m_Id; }
-
-        std::string Name() const { return m_Name; }
 
         void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
             m_Name = subMenuName + m_Name;
@@ -99,13 +88,13 @@ namespace dbg {
             auto a = Args::Inst().GetNumOfParams();
             auto b = m_Params.size();
             if (Args::Inst().GetNumOfParams() != m_Params.size()) {
-                //todo: print error
+                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error
                 return false;
             }
             if (m_Callback) {
                 return m_Callback();
             }
-           //todo: print error, callback wasn't assigned
+            printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error, callback wasn't assigned
            return false;
         }
 

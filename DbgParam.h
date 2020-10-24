@@ -12,14 +12,14 @@
 
 namespace dbg {
 
-    struct option_t : public NamedEntity {
+    struct option_t : public PrintableEntity {
         const std::string Value;
        option_t(const std::string & value, const std::string & name, const std::string & descp = "") :
             Value{value},
-           NamedEntity(name, descp){ }
+           PrintableEntity(name, descp){ }
     };
 
-    class Param : public NamedEntity {
+    class Param : public PrintableEntity {
     private:
         const std::vector<option_t> m_Options;
 
@@ -27,7 +27,7 @@ namespace dbg {
         Param(const std::string & name,
                 const std::string & description,
                 const std::vector<option_t> & options = std::vector<option_t>()) :
-                    NamedEntity(name, description),
+                    PrintableEntity(name, description),
                     m_Options{options}
                     { }
     };

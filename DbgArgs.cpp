@@ -34,15 +34,16 @@ namespace dbg {
     std::string Args::GetNext() {
         //todo: turn pre-cond checks into RT_ASSERT
         if (m_CharsArr == nullptr) {
-            // todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
+            printf("error: %s\n", __PRETTY_FUNCTION__);// todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
+
             return "";
         }
         if (m_CurrentParam >= m_NumOfParams) {
-            // todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
+            printf("error: %s\n", __PRETTY_FUNCTION__);// todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
             return "";
         }
         if (m_CurrentIndex >= m_CharsArrSize) {
-            // todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
+            printf("error: %s\n", __PRETTY_FUNCTION__);// todo: print error, we are out of bound. maybe the error should be more like a friendly warning to tell the user that he expected a param, but no param found
             return "";
         }
 

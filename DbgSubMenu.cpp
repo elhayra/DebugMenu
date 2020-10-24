@@ -14,7 +14,7 @@ namespace dbg {
     SubMenu::SubMenu(const std::string & name,
                      const std::string & description,
                      const std::vector<Command> & cmds) :
-            NamedEntity(name, description),
+            PrintableEntity(name, description),
             m_Commands{cmds}
     {
 //            m_DisplayStr = "=== EMPTY SUB-MENU: " + m_Name + " ===\n";
@@ -148,7 +148,7 @@ namespace dbg {
             try {
                 inputCmdId = std::stoi(cmdNameCopy);// convert string id to number
             } catch (std::invalid_argument) {
-                //todo: print error - conversion to int failed
+                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
                 return false;
             }
             // if starts with '!' find by id

@@ -7,22 +7,7 @@
 #include <limits>
 
 
-//todo: check params bound by user definition
-// todo; macros to create callback functions with description of the debug func and params boundaries
-//todo: auto padding in printing
-//todo: add option to add title to a group of commands
-// todo : add option to press a number to execute command
-//todo: add option to print verbose commands with the help lines
-//todo: automatically count the number of params user defined and compare to params received input
-//todo: apply bit error checking to all conversions
-//todo: user colors for menus, commands, options, outputs
 
-// parser prints errors internally
-// easier APIs to remember and use
-
-
-
-//todo: print error in case string is empty in the macro
 
 /*
  * Get next available argument if available. Otherwise return "null" chosen value
@@ -82,7 +67,7 @@ namespace {
     }
 
     template <typename T>
-    T GetParam() { /* todo: print error - type not implemented */ }
+    T GetParam() { printf("error: %s\n", __PRETTY_FUNCTION__);/* todo: print error - type not implemented */ }
 
     /** INTEGERS **/
 

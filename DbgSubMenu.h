@@ -9,15 +9,13 @@
 
 
 
-//todo: if command already exist, print error
-//todo: automatically print command help menu if params are wrong or num of params is wrong
-//todo: move includes and impl code  to the right place in cpp file
+
 
 
 namespace dbg {
 
 
-    class SubMenu : public NamedEntity{
+    class SubMenu : public PrintableEntity{
     private:
 
         std::vector<Command> m_Commands;
