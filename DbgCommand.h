@@ -11,7 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include "DbgArgs.h"
-#include "DbgNamedEntity.h"
+#include "DbgPrintableEntity.h"
 
 
 namespace dbg {
@@ -22,24 +22,10 @@ namespace dbg {
         std::function<bool()> m_Callback;
         const std::vector<Param> m_Params;
 
-        /**
-         * calculate full name (name + id) characters length
-         */
-        void _CalculatePrintedNameLen() {
-            uint16_t id = m_Id;
-            // find num of digits in id
-            uint8_t idLen = 0;
-            do {
-                ++idLen;
-                id = id % 10;
-                id = id / 10;
-            } while (id != 0);
 
-            // the format is "[id]-name"
-            // add 3 chars:
-            // 2 - for the "[" before and after "]" the id,
-            // 1 - for the space after the "]"
-            m_Width = idLen + m_Name.size() + 3;
+        void _BuildDisplayString() override {
+            m_DisplayStr = '[' + std::to_string(Id()) + "]-" + Name();
+            m_Width = m_DisplayStr.size();
         }
 
     public:
@@ -70,18 +56,11 @@ namespace dbg {
         {
         }
 
-        size_t GetPrintedNameLen() const {
-            if (m_Width == 0) { // not initialized
-                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error
-            }
-            return m_Width;
-        }
-
         uint16_t Id() const { return m_Id; }
 
         void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
             m_Name = subMenuName + m_Name;
-            _CalculatePrintedNameLen();
+            _BuildDisplayString();
         }
 
         bool operator()() const {
@@ -105,7 +84,6 @@ namespace dbg {
         }
     };
 
-    std::ostream &operator<<(std::ostream & output, const dbg::Command& cmd);
 
 }
 

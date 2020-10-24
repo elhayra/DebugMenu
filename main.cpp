@@ -50,6 +50,7 @@
 //todo: automatically count the number of params user defined and compare to params received input
 //todo: apply bit error checking to all conversions
 //todo: user colors for menus, commands, options, outputs
+ //todo: add documentation comments wherever possible
 
 // parser prints errors internally
 // easier APIs to remember and use
@@ -94,6 +95,7 @@ int main() {
     // I could count the params automatically, but we already get them from the current implementation
     dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
 
+    dbg::MainMenu::Instance().Print();
 
     return 0;
 }

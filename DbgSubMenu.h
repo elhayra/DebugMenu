@@ -5,7 +5,7 @@
 
 
 #include "DbgCommand.h"
-#include "DbgNamedEntity.h"
+#include "DbgPrintableEntity.h"
 
 
 
@@ -19,10 +19,8 @@ namespace dbg {
     private:
 
         std::vector<Command> m_Commands;
-        std::string m_DisplayStr;
-        uint16_t m_Width {0};
 
-        void _BuildPrintStr();
+        void _BuildDisplayString() override;
 
         void _AddSubMenuHeader(std::stringstream & ss);
 
@@ -39,10 +37,6 @@ namespace dbg {
          * @return true if command name found in this sub menu, false otherwise
          */
         bool ExecuteCommandIfExist(const std::string & cmdName) const ;
-
-        uint16_t GetWidth() const { return m_Width; }
-
-        friend std::ostream &operator<<(std::ostream & output, const dbg::SubMenu& subMenu);
     };
 
 }

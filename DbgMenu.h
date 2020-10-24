@@ -3,10 +3,8 @@
 #define DEBUG_MENU_DBGMENU_H
 
 #include "DbgSubMenu.h"
-#include "DbgNamedEntity.h"
+#include "DbgPrintableEntity.h"
 #include "DbgPrintSettings.h"
-
-
 
 #include <string>
 #include <vector>
@@ -16,18 +14,17 @@
 namespace dbg {
 
 
-    class Menu : public PrintableEntity{
+    class Menu : public PrintableEntity {
     private:
         const std::vector<SubMenu> m_SubMenus;
 
-        std::string m_DisplayStr;
 
-        void _BuildPrintStr() {
+        void _BuildDisplayString() override {
 
             // calculate maximum sub menu width
-            uint16_t maxSubMenuWidth = 0;
+            size_t maxSubMenuWidth = 0;
             for (const auto & subMenu : m_SubMenus) {
-                maxSubMenuWidth = std::max(maxSubMenuWidth, subMenu.GetWidth());
+                maxSubMenuWidth = std::max(maxSubMenuWidth, subMenu.Width());
             }
 
             std::stringstream ss;
@@ -39,7 +36,7 @@ namespace dbg {
 
             _AddMenuFooter(ss, maxSubMenuWidth);
 
-            m_DisplayStr = ss.str();
+            m_DisplayStr = ss.str() + '\n';
         }
 
         void _AddMenuHeader(std::stringstream &ss, const uint16_t maxSubMenuWidth) {
@@ -82,7 +79,7 @@ namespace dbg {
              m_SubMenus{subMenus}
              {
                  if ( ! m_SubMenus.empty() ) {
-                     _BuildPrintStr();
+                     _BuildDisplayString();
                      return;
                  }
                  m_DisplayStr = "=== EMPTY MENU: " + m_Name + " ===\n";
@@ -104,9 +101,6 @@ namespace dbg {
             }
             return false;
         }
-
-        friend std::ostream &operator<<(std::ostream & output, const Menu &);
-
 
     };
 

@@ -36,11 +36,10 @@ namespace dbg {
     }
 
 
-
-        _BuildPrintStr();
+        _BuildDisplayString();
     }
 
-    void SubMenu::_BuildPrintStr() {
+    void SubMenu::_BuildDisplayString() {
 
         std::stringstream ss;
 
@@ -69,7 +68,7 @@ namespace dbg {
                 cmdMatrix.at(lineIdx).at(cmdColIdx) = &cmd; // add cmd to current line
                 // find max command length in each column, later
                 // will be used to determine column spaces
-                const size_t cmdCharsLen = cmd.GetPrintedNameLen();
+                const size_t cmdCharsLen = cmd.Width();
                 colsMaxWidth.at(cmdColIdx) = std::max(cmdCharsLen, colsMaxWidth.at(cmdColIdx));
 
                 ++cmdIdx;
@@ -96,7 +95,7 @@ namespace dbg {
             for (uint8_t cmdIdx = 0; cmdIdx < DBG_NUM_CMD_IN_ROW; ++cmdIdx) {
                 if (line.at(cmdIdx) != nullptr) {
                     const Command & cmd = *(line.at(cmdIdx));
-                    const uint8_t spaces = colsMaxWidth.at(cmdIdx) - cmd.GetPrintedNameLen();
+                    const uint8_t spaces = colsMaxWidth.at(cmdIdx) - cmd.Width();
                     ss << cmd << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
                 }
             }
@@ -105,7 +104,7 @@ namespace dbg {
 
         _AddSubMenuFooter(ss);
 
-        m_DisplayStr = ss.str();
+        m_DisplayStr = '\n' + ss.str() + '\n';
     }
 
     void SubMenu::_AddSubMenuHeader(std::stringstream & ss) {
@@ -164,11 +163,6 @@ namespace dbg {
             return true;
         }
         return false;
-    }
-
-    std::ostream &operator<<(std::ostream & output, const dbg::SubMenu& subMenu) {
-        output << '\n' << subMenu.m_DisplayStr << '\n';
-        return output;
     }
 
 }

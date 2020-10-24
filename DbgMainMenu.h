@@ -42,6 +42,10 @@ namespace dbg {
             }
         }
 
+        void Print() const {
+            std::for_each(m_Menus.begin(), m_Menus.end(), [](const Menu & menu){std::cout << menu;});
+        }
+
     };
 }
 

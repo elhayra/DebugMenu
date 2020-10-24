@@ -238,8 +238,6 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
             }
     };
 
-    std::cout << myMenu;
-
     return myMenu;
 
 } // end of LoadDebugMenu() function
