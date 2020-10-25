@@ -21,9 +21,6 @@ namespace dbg {
 
         std::vector<Command> m_Commands;
 
-        // hold commands reference if the a table format
-        std::vector<std::array<const Command*, DBG_NUM_CMD_IN_ROW>> m_CmdMatrix;
-
         // hold max command length in each column
         std::array<size_t, DBG_NUM_CMD_IN_ROW> m_ColsMaxWidth {0};
 
@@ -31,7 +28,9 @@ namespace dbg {
 
         void _PrintSubMenuFooter(const size_t maxWidth) const ;
 
-        void _FillCmdMatrix();
+        void _CalcColsMaxWidths();
+
+        void _AddCommandsNamePrefix();
 
     public:
         SubMenu(const std::string & name,

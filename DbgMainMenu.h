@@ -41,7 +41,6 @@ namespace dbg {
          */
         void AddMenu(const Menu & menu) {
             m_Menus.push_back(menu);
-            Print();
         }
 
         void ExecuteCommand(const std::string & cmdName, const char * params, const uint8_t numParams) const {

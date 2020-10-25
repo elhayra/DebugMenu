@@ -16,49 +16,23 @@ namespace dbg {
             m_Commands{cmds}
     {
         if ( ! m_Commands.empty() ) {
-            for (auto &cmd : m_Commands) {
-                cmd.Print();
-            }
-
-            _FillCmdMatrix();
+            _AddCommandsNamePrefix();
+            _CalcColsMaxWidths();
         }
     }
 
+    void SubMenu::_AddCommandsNamePrefix() {
+        std::for_each(m_Commands.begin(), m_Commands.end(), [&](Command& cmd){
+            cmd.AddSubMenuNameAsPrefix(Name()); });
+    }
 
-    void SubMenu::_FillCmdMatrix() {
-        m_CmdMatrix.push_back({nullptr}); // insert first row
+    void SubMenu::_CalcColsMaxWidths() {
 
-        uint8_t lineIdx = 0;
-        uint8_t cmdIdx = 0;
-
-
-
-        auto startNewLine = [&]() {
-            m_CmdMatrix.push_back({nullptr});
-            ++lineIdx;
-        };
-
-        while (cmdIdx < m_Commands.size()) {
-            const auto &cmd = m_Commands.at(cmdIdx);
-
+        // calculate max width of each column
+        for (int cmdIdx = 0; cmdIdx < m_Commands.size(); ++cmdIdx) {
+            const auto & cmd = m_Commands.at(cmdIdx);
             const uint8_t cmdColIdx = cmdIdx % DBG_NUM_CMD_IN_ROW;
-
-            if (cmdColIdx < DBG_NUM_CMD_IN_ROW) { // don't exceed num of allowed cmds in a row
-                m_CmdMatrix.at(lineIdx).at(cmdColIdx) = &cmd; // add cmd to current line
-                // find max command length in each column, later
-                // will be used to determine column spaces
-                const size_t cmdCharsLen = cmd.Width();
-                m_ColsMaxWidth.at(cmdColIdx) = std::max(cmdCharsLen, m_ColsMaxWidth.at(cmdColIdx));
-
-                ++cmdIdx;
-
-                if (cmdIdx == (lineIdx * DBG_NUM_CMD_IN_ROW + DBG_NUM_CMD_IN_ROW)) {
-                    startNewLine();
-                }
-
-            } else { // no space in current line, open a new one
-                startNewLine();
-            }
+            m_ColsMaxWidth.at(cmdColIdx) = std::max(cmd.Width(), m_ColsMaxWidth.at(cmdColIdx));
         }
 
         // calculate screen width
@@ -75,17 +49,22 @@ namespace dbg {
 
         _PrintSubMenuHeader(maxWidth);
 
-        for (const auto & line : m_CmdMatrix) {
-            for (uint8_t cmdIdx = 0; cmdIdx < DBG_NUM_CMD_IN_ROW; ++cmdIdx) {
-                if (line.at(cmdIdx) != nullptr) {
-                    const Command & cmd = *(line.at(cmdIdx));
-                    const uint8_t spaces = m_ColsMaxWidth.at(cmdIdx) - cmd.Width();
-                    cmd.Print();
-                    std::cout << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
-                }
+        // print the commands by columns
+        for (int cmdIdx = 0; cmdIdx < m_Commands.size(); ++cmdIdx) {
+            const auto & cmd = m_Commands.at(cmdIdx);
+            const uint8_t cmdColIdx = cmdIdx % DBG_NUM_CMD_IN_ROW;
+            const int spaces = m_ColsMaxWidth.at(cmdColIdx) - cmd.Width();
+            if (spaces < 0) {
+                printf("ERROR: %s\n", __PRETTY_FUNCTION__); // spaces can't be negative
+                return;
             }
-            std::cout << std::endl;
+            cmd.Print();
+            std::cout << std::string(spaces + DBG_NUM_CMD_SPACE_CHRS, ' ');
+            if (cmdColIdx == DBG_NUM_CMD_IN_ROW-1) {
+                std::cout << std::endl;
+            }
         }
+        std::cout << std::endl;
 
         _PrintSubMenuFooter(maxWidth);
 
@@ -106,7 +85,11 @@ namespace dbg {
         std::cout << " " <<  m_Name << " ";
 
         // add border chars after sub menu name
-        std::cout << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR) << '\n';
+        auto padding = subMenuNamePadding;
+        if (subMenuNameLen % 2 != 0) {
+           --padding;
+        }
+        std::cout << std::string(padding, DBG_SUB_MENU_BORDER_CHAR) << '\n';
 
     }
 

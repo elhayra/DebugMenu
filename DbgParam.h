@@ -20,7 +20,7 @@ namespace dbg {
     public:
        Option(const std::string & value, const std::string & name, const std::string & descp = "") :
             m_Value{value},
-           PrintableEntity(name, descp){ Print(); }
+           PrintableEntity(name, descp){ }
         void Print(const size_t maxWidth = 0) const override {
            std::cout << '[' + m_Value + "] <" + m_Name + '>';
            if ( ! m_Description.empty() ) {
@@ -39,7 +39,7 @@ namespace dbg {
                 const std::vector<Option> & options = std::vector<Option>()) :
                     PrintableEntity(name, description),
                     m_Options{options}
-                    { Print(); }
+                    {  }
 
         void Print(const size_t maxWidth = 0) const override {
             std::cout << '<' + m_Name + "> - " + m_Description + '\n';

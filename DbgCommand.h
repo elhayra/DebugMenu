@@ -22,8 +22,7 @@ namespace dbg {
         std::function<bool()> m_Callback;
         const std::vector<Param> m_Params;
 
-
-
+        void _UpdateWidthByName() { m_Width = m_Name.size() + 4; }
 
     public:
         Command(const std::string &name,
@@ -35,7 +34,6 @@ namespace dbg {
                 m_Params{params},
                 m_Callback{callback}
         {
-            m_Width = m_Name.size();
         }
 
         Command(const Command& other) :
@@ -44,7 +42,6 @@ namespace dbg {
                 m_Params{other.m_Params},
                 m_Callback{other.m_Callback}
         {
-            m_Width = m_Name.size();
         }
 
         Command(const Command&& other) :
@@ -53,18 +50,19 @@ namespace dbg {
             m_Params(std::move(other.m_Params)),
             m_Callback{std::move(other.m_Callback)}
         {
-            m_Width = m_Name.size();
         }
 
         uint16_t Id() const { return m_Id; }
 
         void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
             m_Name = subMenuName + m_Name;
+            _UpdateWidthByName();
         }
 
         void Print(const size_t maxWidth = 0) const override {
             std::cout << '[' + std::to_string(Id()) + "]-" + Name();
         }
+
 
         bool operator()() const {
             auto a = Args::Inst().GetNumOfParams();
