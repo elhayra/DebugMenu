@@ -77,6 +77,7 @@
 //todo: write test for non-exist command/menu
 //todo: add colors to printings
 //todo: print temp error with printf for all the errors todo: and test them
+//todo: create only sub menus and menus with no commands in them, or very very short commands and very long menus names to see if menus padding is ruined
 
 int main() {
 
@@ -96,6 +97,7 @@ int main() {
     dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
 
     dbg::MainMenu::Instance().Print();
+
 
     return 0;
 }

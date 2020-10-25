@@ -42,6 +42,7 @@ namespace dbg {
                 m_Params{other.m_Params},
                 m_Callback{other.m_Callback}
         {
+            m_Width = other.Width();
         }
 
         Command(const Command&& other) :
@@ -50,7 +51,13 @@ namespace dbg {
             m_Params(std::move(other.m_Params)),
             m_Callback{std::move(other.m_Callback)}
         {
+            m_Width = other.Width();
         }
+
+//        Command(const Command&) = delete;
+//        Command(const Command&&) = delete;
+//
+//        Command& operator==(const Command&) = delete;
 
         uint16_t Id() const { return m_Id; }
 

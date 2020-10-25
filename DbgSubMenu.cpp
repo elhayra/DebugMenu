@@ -6,6 +6,10 @@
 #include <iostream>
 #include <algorithm>
 
+// min chars to put before and after
+// the sub-menu name. This will also determine
+// the min width along with the sub-menu name
+#define MIN_PRE_POST_BORDER_NAME_CHARS   3
 
 namespace dbg {
 
@@ -15,6 +19,9 @@ namespace dbg {
             PrintableEntity(name, description),
             m_Commands{cmds}
     {
+        // set min width as a starting point
+        m_Width = m_Name.size() + (MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+
         if ( ! m_Commands.empty() ) {
             _AddCommandsNamePrefix();
             _CalcColsMaxWidths();
@@ -27,7 +34,6 @@ namespace dbg {
     }
 
     void SubMenu::_CalcColsMaxWidths() {
-
         // calculate max width of each column
         for (int cmdIdx = 0; cmdIdx < m_Commands.size(); ++cmdIdx) {
             const auto & cmd = m_Commands.at(cmdIdx);
@@ -35,12 +41,15 @@ namespace dbg {
             m_ColsMaxWidth.at(cmdColIdx) = std::max(cmd.Width(), m_ColsMaxWidth.at(cmdColIdx));
         }
 
+        size_t cmdLineMaxWidth = 0;
         // calculate screen width
         for (const auto colWidth : m_ColsMaxWidth) {
-            m_Width += colWidth; // add cols widths
+            cmdLineMaxWidth += colWidth; // add cols widths
         }
         // add cols spacers: we have N commands that are separated by N-1 spacers
-        m_Width += (DBG_NUM_CMD_SPACE_CHRS * (DBG_NUM_CMD_IN_ROW-1));
+        cmdLineMaxWidth += (DBG_NUM_CMD_SPACE_CHRS * (DBG_NUM_CMD_IN_ROW-1));
+
+        m_Width = std::max(m_Width, cmdLineMaxWidth);
     }
 
     void SubMenu::Print(const size_t maxWidth) const {
@@ -73,24 +82,22 @@ namespace dbg {
 
     void SubMenu::_PrintSubMenuHeader(const size_t maxWidth) const {
         // add 2 for space before and after the name
-        const size_t subMenuNameLen = m_Name.size() + 2;
+        const std::string paddedName = ' ' + m_Name + ' ';
 
-        size_t subMenuNamePadding = 0;
-        if (maxWidth >= subMenuNameLen) {
-            subMenuNamePadding = (maxWidth / 2) - (subMenuNameLen / 2);
+        int preNameBorder = (maxWidth / 2) - (paddedName.size() / 2);
+        if (preNameBorder < 0) {
+            printf("ERROR: %s\n", __PRETTY_FUNCTION__); // spaces can't be negative
+            return;
         }
-        // add border chars before sub menu name
-        std::cout << std::string(subMenuNamePadding, DBG_SUB_MENU_BORDER_CHAR);
 
+        // add border chars before sub menu name
+        std::cout << std::string(preNameBorder, DBG_SUB_MENU_BORDER_CHAR);
         std::cout << " " <<  m_Name << " ";
 
-        // add border chars after sub menu name
-        auto padding = subMenuNamePadding;
-        if (subMenuNameLen % 2 != 0) {
-           --padding;
+        int postNameBorder = maxWidth - paddedName.size() - preNameBorder;
+        if (postNameBorder > 0) {
+            std::cout << std::string(postNameBorder, DBG_SUB_MENU_BORDER_CHAR) << '\n';
         }
-        std::cout << std::string(padding, DBG_SUB_MENU_BORDER_CHAR) << '\n';
-
     }
 
     void SubMenu::_PrintSubMenuFooter(const size_t maxWidth) const {
