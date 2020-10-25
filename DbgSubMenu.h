@@ -42,7 +42,14 @@ namespace dbg {
          * @param cmdName - command name to execute
          * @return true if command name found in this sub menu, false otherwise
          */
-        bool ExecuteCommandIfExist(const std::string & cmdName) const ;
+        bool ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const ;
+
+        /**
+         * print command help if it exist in this sub menu
+         * @param cmdName - command name
+         * @return true if command name found in this sub menu, false otherwise
+         */
+        bool PrintCommandHelpIfExist(const std::string & cmdName) const ;
 
         void Print(const size_t maxWidth) const override;
 

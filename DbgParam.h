@@ -42,12 +42,14 @@ namespace dbg {
                     {  }
 
         void Print(const size_t maxWidth = 0) const override {
-            std::cout << '<' + m_Name + "> - " + m_Description + '\n';
+            std::cout << "\t<" + m_Name + "> - " + m_Description + '\n';
             if (m_Options.empty()) {return;}
             for (const auto option : m_Options) {
+                std::cout << "\t\t";
                 option.Print();
                 std::cout << std::endl;
             }
+            std::cout << std::endl;
         }
     };
 

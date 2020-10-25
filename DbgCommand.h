@@ -34,6 +34,7 @@ namespace dbg {
                 m_Params{params},
                 m_Callback{callback}
         {
+            m_Width = m_Name.size();
         }
 
         Command(const Command& other) :
@@ -45,21 +46,11 @@ namespace dbg {
             m_Width = other.Width();
         }
 
-        Command(const Command&& other) :
-            PrintableEntity{std::move(other.m_Name), std::move(other.m_Description)},
-            m_Id{other.m_Id},
-            m_Params(std::move(other.m_Params)),
-            m_Callback{std::move(other.m_Callback)}
-        {
-            m_Width = other.Width();
-        }
-
-//        Command(const Command&) = delete;
-//        Command(const Command&&) = delete;
-//
-//        Command& operator==(const Command&) = delete;
+        Command(const Command&& other) = delete;
 
         uint16_t Id() const { return m_Id; }
+
+        size_t NumOfParams() const { return m_Params.size(); }
 
         void AddSubMenuNameAsPrefix(const std::string & subMenuName) {
             m_Name = subMenuName + m_Name;
@@ -68,6 +59,15 @@ namespace dbg {
 
         void Print(const size_t maxWidth = 0) const override {
             std::cout << '[' + std::to_string(Id()) + "]-" + Name();
+        }
+
+        void PrintHelp() const {
+            std::cout << '\n' << Name() << ":\n"
+                      << Description() << "\n\n";
+            if (!m_Params.empty()) {
+                std::for_each(m_Params.begin(), m_Params.end(),
+                        [](const Param& param){ param.Print(); });
+            }
         }
 
 
@@ -85,11 +85,6 @@ namespace dbg {
            return false;
         }
 
-        bool operator==(const Command& other) const {
-            return ((&other == this) ||
-                    (other.Name() == this->Name()) ||
-                    (other.Id() == this->Id()));
-        }
     };
 
 

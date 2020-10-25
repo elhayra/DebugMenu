@@ -40,8 +40,8 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                     },
                     { // param
 
-                            "param 1 name",
-                            "param1 descpription"
+                            "param 2 name",
+                            "param2 descpription"
                             // option list is optional
                     }
             },
@@ -190,6 +190,8 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
             },
             f  //regular function
     };
+
+    
     ////////////////////////////////////////
     //           SUB MENUES
     ////////////////////////////////////////

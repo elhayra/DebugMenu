@@ -12,6 +12,10 @@
 // easy to use arguments parsing functions
 // valid number of params is checked automatically
 // automatic "pretty printer" including spacing, padding, headlines and extendable screen width
+// automatically add sub-menu name as prefix to its command names
+// automatically print success or failure command message after execution
+// automatically show help in case of parameters error
+// use '!' to execute command by number id as a shortcut
  */
 
 //--------TODO---------
@@ -22,10 +26,6 @@
  * All drawing logic is similar, so move it to the MainMenu, and then all other components
  * should only return their width, but the MainMenu check what is the comp with max widht,
  * and will draw all accordingly
- *
- * - bring "todo" from all other files to this spot
- *
- * - bring "features" from all other files to this spot
  *
  * - add printings for Command and test that it looks good with the description and params
  *
@@ -93,11 +93,12 @@ int main() {
     // register your debug menu to main menu
     dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu::LoadDebugMenu());
 
+    dbg::MainMenu::Instance().Print();
+
     // I could count the params automatically, but we already get them from the current implementation
     dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
 
-    dbg::MainMenu::Instance().Print();
-
+    dbg::MainMenu::Instance().PrintCommandHelp("PutinMenuLaunchRockets");
 
     return 0;
 }

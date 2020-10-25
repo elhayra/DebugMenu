@@ -12,10 +12,13 @@
 /*
  * Get next available argument if available. Otherwise return "null" chosen value
  */
+
+//todo: add to the error the text: failed to parse param. make sure that you provided enough params in command line
 #define __DBG_GET_ARGS_AND_CHECK__(ret_val)\
     std::istringstream ss(Args::Inst().GetNext());\
     do {\
         if (ss.str().empty()) {\
+            printf("error: %s\n", __PRETTY_FUNCTION__);\
             return ret_val;\
         }\
     } while (0)
@@ -62,9 +65,7 @@ namespace {
     }
 }
 
-    uint8_t GetNumOfParams() {
-        return Args::Inst().GetNumOfParams();
-    }
+    uint8_t GetNumOfParams() { return Args::Inst().GetNumOfParams(); }
 
     template <typename T>
     T GetParam() { printf("error: %s\n", __PRETTY_FUNCTION__);/* todo: print error - type not implemented */ }

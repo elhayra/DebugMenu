@@ -47,7 +47,15 @@ namespace dbg {
             dbg::Args::Inst().SetArgs(params, numParams);
 
             for (const auto & menu : m_Menus) {
-                if (menu.ExecuteCommand(cmdName)) {
+                if (menu.ExecuteCommand(cmdName, numParams)) {
+                    return;
+                }
+            }
+        }
+
+        void PrintCommandHelp(const std::string& cmdName) {
+            for (const auto & menu : m_Menus) {
+                if (menu.PrintCommandHelp(cmdName)) {
                     return;
                 }
             }

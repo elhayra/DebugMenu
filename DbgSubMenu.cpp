@@ -105,7 +105,7 @@ namespace dbg {
     }
 
 
-    bool SubMenu::ExecuteCommandIfExist(const std::string & cmdName) const {
+    bool SubMenu::ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const {
 
         if (m_Commands.empty()) {
             return false;
@@ -134,10 +134,35 @@ namespace dbg {
         const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(), comparatorFunc);
 
         if (cmdItr != std::end(m_Commands)) {
-            (*cmdItr)(); // execute command callback
+            const auto& cmd = *cmdItr;
+            if (cmd.NumOfParams() != numParams) {
+                printf("error: wrong params number %s\n", __PRETTY_FUNCTION__);//todo: print error - wrong number of params
+                //todo: add to error description: according to your debug command description, your command needs cmd.NumOfParams() params, but only numParams were provided by command line
+            } else if ( cmd() ) { // execute command callback
+                printf("\ncommand executed successfully\n"); //todo: rt_info
+            } else {
+                printf("\ncommand failed\n"); //todo: rt_info
+            }
             return true;
         }
         return false;
     }
+
+    bool SubMenu::PrintCommandHelpIfExist(const std::string & cmdName) const {
+
+        if (m_Commands.empty()) {
+            return false;
+        }
+
+        const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(),
+                [&cmdName](const Command& cmd){ return cmd.Name() == cmdName; });
+
+        if (cmdItr != std::end(m_Commands)) {
+            cmdItr->PrintHelp();
+            return true;
+        }
+        return false;
+    }
+
 
 }

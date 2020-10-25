@@ -78,12 +78,29 @@ namespace dbg {
          * @param cmdName - the name of the command to execute (must be unique)
          * @return - true if found command to execute, false otherwise
          */
-        bool ExecuteCommand(const std::string & cmdName) const {
+        bool ExecuteCommand(const std::string & cmdName, const uint8_t numParams) const {
             if (m_SubMenus.empty()) {
                 return false;
             }
             for (const auto subMenu : m_SubMenus) {
-                if (subMenu.ExecuteCommandIfExist(cmdName)) {
+                if (subMenu.ExecuteCommandIfExist(cmdName, numParams)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Print command description (help)
+         * @param cmdName - name of the command
+         * @return - true if found command, false otherwise
+         */
+        bool PrintCommandHelp(const std::string & cmdName) const {
+            if (m_SubMenus.empty()) {
+                return false;
+            }
+            for (const auto subMenu : m_SubMenus) {
+                if (subMenu.PrintCommandHelpIfExist(cmdName)) {
                     return true;
                 }
             }
