@@ -43,7 +43,13 @@ namespace dbg {
             m_Menus.push_back(menu);
         }
 
+#define MIN_CMD_NAME_SIZE 2 // todo: move to cpp
         void ExecuteCommand(const std::string & cmdName, const char * params, const uint8_t numParams) const {
+            if (cmdName.size() < MIN_CMD_NAME_SIZE) {
+               printf("error %s\n", __PRETTY_FUNCTION__); // todo: print error
+               return;
+            }
+
             dbg::Args::Inst().SetArgs(params, numParams);
 
             for (const auto & menu : m_Menus) {

@@ -15,12 +15,13 @@
 // automatically add sub-menu name as prefix to its command names
 // automatically print success or failure command message after execution
 // automatically show help in case of parameters error
-// use '!' to execute command by number id as a shortcut
+// use '!' command prefix to execute command by number id as a shortcut
+// use '@' command prefix to perform accurate time measurement of execution
  */
 
 //--------TODO---------
 /**
- *
+ * - add documentation to the debug main menu description about the ! and # prefixes
  * - all sub menues should be as long as the longest sub
  * menu (and the same for Menu), so drawing logic should be moved up to the *main* menu.
  * All drawing logic is similar, so move it to the MainMenu, and then all other components
@@ -37,7 +38,7 @@
  *
 //todo: write macros to assert params boundaries and print auto error with numbers in case failed
 
-//todo: if command already exist, print error
+//todo: if command/submenu/menu already exist, print error
 //todo: automatically print command help menu if params are wrong or num of params is wrong
 //todo: move includes and impl code  to the right place in cpp file
  *
@@ -54,8 +55,6 @@
 
 // parser prints errors internally
 // easier APIs to remember and use
-
-//todo: try to make the command structures simpler to use and write - first think how I want it to look like
 
 
 //todo: print error in case string is empty in the macro
@@ -96,7 +95,7 @@ int main() {
     dbg::MainMenu::Instance().Print();
 
     // I could count the params automatically, but we already get them from the current implementation
-    dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
+    dbg::MainMenu::Instance().ExecuteCommand("@PutinMenuLaunchRockets", "15 elhay", 2);
 
     dbg::MainMenu::Instance().PrintCommandHelp("PutinMenuLaunchRockets");
 

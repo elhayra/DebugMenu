@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 // min chars to put before and after
 // the sub-menu name. This will also determine
@@ -111,12 +112,16 @@ namespace dbg {
             return false;
         }
 
+        std::string cmdNameCopy = cmdName;
+
         // by default find by name
-        std::function<bool(const Command&)> comparatorFunc = [cmdName](const Command& cmd) {
-            return cmd.Name() == cmdName;
+        std::function<bool(const Command&)> comparatorFunc = [&cmdNameCopy](const Command& cmd) {
+            return cmd.Name() == cmdNameCopy;
         };
-        if (cmdName.rfind('!') == 0) {
-            std::string cmdNameCopy = cmdName;
+
+        bool multiMeasure = false;
+
+        if (cmdNameCopy.at(0) == '!') { // run command by id
             cmdNameCopy.erase(0, 1); // remove first char ('!') so only id is left
             uint16_t inputCmdId = 0;
             try {
@@ -129,6 +134,9 @@ namespace dbg {
             comparatorFunc = [&inputCmdId](const Command& cmd) {
                 return cmd.Id() == inputCmdId;
             };
+        } else if (cmdNameCopy.at(0) == '@') { // measure execution time multiple times for better results
+            cmdNameCopy.erase(0, 1); // remove first char ('@') so only cmd name is left
+            multiMeasure = true;
         }
 
         const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(), comparatorFunc);
@@ -138,10 +146,39 @@ namespace dbg {
             if (cmd.NumOfParams() != numParams) {
                 printf("error: wrong params number %s\n", __PRETTY_FUNCTION__);//todo: print error - wrong number of params
                 //todo: add to error description: according to your debug command description, your command needs cmd.NumOfParams() params, but only numParams were provided by command line
-            } else if ( cmd() ) { // execute command callback
-                printf("\ncommand executed successfully\n"); //todo: rt_info
             } else {
-                printf("\ncommand failed\n"); //todo: rt_info
+                uint16_t numOfMeasureIters = 1;
+                if (multiMeasure) {
+                    numOfMeasureIters = 20000;
+                }
+
+                std::vector<uint64_t> durations;
+                durations.reserve(numOfMeasureIters);
+                bool cmdSuccess = false;
+
+                uint16_t itersLeftToRun = numOfMeasureIters;
+                while (itersLeftToRun > 0) {
+                    const auto begin = std::chrono::steady_clock::now();
+                    cmdSuccess |= cmd();
+                    const auto end = std::chrono::steady_clock::now();
+                    const uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+                    durations.push_back(duration);
+                    --itersLeftToRun;
+                }
+
+                uint64_t totalDurationNano = 0;
+                for (const uint64_t duration : durations) {
+                    totalDurationNano += duration;
+                }
+
+                const uint64_t avgTimeNano = totalDurationNano / durations.size();
+
+                if (cmdSuccess) { // execute command callback
+                    printf("\ncommand executed successfully\n"); //todo: rt_info
+                } else {
+                    printf("\ncommand failed\n"); //todo: rt_info
+                }
+                printf("ran %d iterations, avg time: %llu (nano)", numOfMeasureIters, avgTimeNano); //todo: rt_info
             }
             return true;
         }

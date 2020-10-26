@@ -191,7 +191,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
             f  //regular function
     };
 
-    
+
     ////////////////////////////////////////
     //           SUB MENUES
     ////////////////////////////////////////
