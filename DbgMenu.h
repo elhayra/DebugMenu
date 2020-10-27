@@ -5,6 +5,7 @@
 #include "DbgSubMenu.h"
 #include "DbgPrintableEntity.h"
 #include "DbgPrintSettings.h"
+#include "DbgUtil.h"
 
 #include <string>
 #include <vector>
@@ -70,6 +71,10 @@ namespace dbg {
              PrintableEntity(name, description),
              m_SubMenus{subMenus}
              {
+                 std::string subMenuName = util::_GetFirstNonUniqueElement(m_SubMenus);
+                 if ( ! subMenuName.empty() ) {
+                     printf("error: %s | Sub-Menu name %s already exist\n", __PRETTY_FUNCTION__, subMenuName.c_str()); // todo: RT_
+                 }
                 m_Width = GetSubElementWithMaxWidth();
              }
 
@@ -83,7 +88,9 @@ namespace dbg {
                 return false;
             }
             for (const auto subMenu : m_SubMenus) {
-                if (subMenu.ExecuteCommandIfExist(cmdName, numParams)) {
+                const auto execRes = subMenu.ExecuteCommandIfExist(cmdName, numParams);
+                if (execRes != SubMenu::eExecResult::NOT_FOUND) {
+                    // in any case we found the command, stop searching for it and return
                     return true;
                 }
             }

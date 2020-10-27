@@ -10,16 +10,26 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <chrono>
+
 #include "DbgArgs.h"
 #include "DbgPrintableEntity.h"
 
 
 namespace dbg {
+
+    struct cmd_ret_t {
+        bool Success;
+        std::string Message;
+        cmd_ret_t(const bool success, const std::string& msg="") :
+            Success{success}, Message{msg} { }
+    };
+
     class Command : public PrintableEntity {
     private:
         static uint16_t m_IdGen;
         const uint16_t m_Id;
-        std::function<bool()> m_Callback;
+        std::function<cmd_ret_t()> m_Callback;
         const std::vector<Param> m_Params;
 
         void _UpdateWidthByName() { m_Width = m_Name.size() + 4; }
@@ -28,7 +38,7 @@ namespace dbg {
         Command(const std::string &name,
                 const std::string &description,
                 const std::vector<Param> &params,
-                const std::function<bool()> &callback) :
+                const std::function<cmd_ret_t()> &callback) :
                 PrintableEntity{name, description},
                 m_Id{m_IdGen++},
                 m_Params{params},
@@ -70,20 +80,56 @@ namespace dbg {
             }
         }
 
-
-        bool operator()() const {
-            auto a = Args::Inst().GetNumOfParams();
-            auto b = m_Params.size();
-            if (Args::Inst().GetNumOfParams() != m_Params.size()) {
-                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error
+        bool Run(const bool multiMeasure) const {
+            if ( ! m_Callback ) {
                 return false;
+                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error, callback wasn't assigned
             }
-            if (m_Callback) {
-                return m_Callback();
+
+            uint16_t numOfMeasureIters = 1;
+            if (multiMeasure) {
+                numOfMeasureIters = 20000;
             }
-            printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error, callback wasn't assigned
-           return false;
+
+            std::vector<uint64_t> durations;
+            durations.reserve(numOfMeasureIters);
+            cmd_ret_t summaryCmdRet{false};
+
+            uint16_t itersLeftToRun = numOfMeasureIters;
+            while (itersLeftToRun > 0) {
+                const auto begin = std::chrono::steady_clock::now();
+
+                auto cmdRet = m_Callback();
+                summaryCmdRet.Success |= cmdRet.Success;
+                summaryCmdRet.Message = cmdRet.Message;
+
+                const auto end = std::chrono::steady_clock::now();
+
+                const uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+                durations.push_back(duration);
+                --itersLeftToRun;
+            }
+
+            uint64_t totalDurationNano = 0;
+            for (const uint64_t duration : durations) {
+                totalDurationNano += duration;
+            }
+
+            const uint64_t avgTimeNano = totalDurationNano / durations.size();
+
+            if (summaryCmdRet.Success) {
+                printf("\ncommand %s executed successfully\n", m_Name.c_str()); //todo: rt_info
+            } else {
+                printf("\ncommand %s failed\n", m_Name.c_str()); //todo: rt_info
+                if ( ! summaryCmdRet.Message.empty() ) {
+                   printf("command error: %s\n", summaryCmdRet.Message.c_str()); //todo: rt_info
+                }
+            }
+            printf("ran %d iterations, avg execution time: %llu (nano)\n", numOfMeasureIters, avgTimeNano);
+
+            return summaryCmdRet.Success;
         }
+
 
     };
 

@@ -53,6 +53,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                 std::string myName = dbg::GetParam<std::string>();
 
                 std::cout << "hello " << myName << ", this is my lambda function callback. got param value: " << (int)myParam1 << std::endl;
+
                 return true;
             }
     };
@@ -76,7 +77,10 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                             // option list is optional
                     }
             },
-            f  //regular function
+            []() {
+
+                return dbg::cmd_ret_t{false, "something bad"};
+            }
     };
 
     dbg::Command cmd3{

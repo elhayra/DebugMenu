@@ -21,9 +21,6 @@ namespace dbg {
 
         ~MainMenu() = default;
 
-
-
-
     public:
         MainMenu(MainMenu const &) = delete;
         MainMenu(MainMenu const &&) = delete;
@@ -41,12 +38,17 @@ namespace dbg {
          */
         void AddMenu(const Menu & menu) {
             m_Menus.push_back(menu);
+
+            std::string menuName = util::_GetFirstNonUniqueElement(m_Menus);
+            if ( ! menuName.empty() ) {
+                printf("error: %s | menu name %s already exist\n", __PRETTY_FUNCTION__, menuName.c_str()); // todo: RT_
+            }
         }
 
 #define MIN_CMD_NAME_SIZE 2 // todo: move to cpp
         void ExecuteCommand(const std::string & cmdName, const char * params, const uint8_t numParams) const {
             if (cmdName.size() < MIN_CMD_NAME_SIZE) {
-               printf("error %s\n", __PRETTY_FUNCTION__); // todo: print error
+               printf("error %s\n", __PRETTY_FUNCTION__); // todo: print error command must have at least 2 chars
                return;
             }
 

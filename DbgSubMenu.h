@@ -33,6 +33,13 @@ namespace dbg {
         void _AddCommandsNamePrefix();
 
     public:
+        enum class eExecResult {
+            FOUND_BUT_FAILED, // found command but execution failed
+            FOUND_AND_SUCCEEDED, // found command and execution succeeded
+            NOT_FOUND, // command not found in this sub-menu,
+            PRE_COND_FAIL // other pre-condition failed
+        };
+
         SubMenu(const std::string & name,
              const std::string & description,
              const std::vector<Command> & cmds);
@@ -40,14 +47,14 @@ namespace dbg {
         /**
          * Execute command if it exist in this sub menu
          * @param cmdName - command name to execute
-         * @return true if command name found in this sub menu, false otherwise
+         * @return eExecResult
          */
-        bool ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const ;
+        eExecResult ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const ;
 
         /**
          * print command help if it exist in this sub menu
          * @param cmdName - command name
-         * @return true if command name found in this sub menu, false otherwise
+         * @return true if command found, false otherwise
          */
         bool PrintCommandHelpIfExist(const std::string & cmdName) const ;
 

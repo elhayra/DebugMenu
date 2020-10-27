@@ -47,15 +47,13 @@ namespace {
      * @return T - parsed numeric value
      */
     template <typename T, typename S>
-    T GetNumberParam(const bool hexMode = false) {
+    T GetNumberParam() {
         __DBG_GET_ARGS_AND_CHECK__(0);
         T res = 0;
-        if (hexMode) {
-            const auto & str = ss.str();
-            const bool hexPrefix = (str.size() > 2) && (str[0] == '0') && (str[1] == 'x');
-            if (hexPrefix) { // if string starts with 0x prefix, ignore it
-                ss.ignore(2);
-            }
+        const auto & str = ss.str();
+        const bool hexPrefix = (str.size() > 2) && (str[0] == '0') && (str[1] == 'x');
+        if (hexPrefix) { // if string starts with 0x prefix, ignore it
+            ss.ignore(2);
             ss >> std::hex >> res;
             ss >> std::dec;
         } else {
@@ -95,9 +93,6 @@ namespace {
 
     template <>
     int64_t GetParam<int64_t>() { return GetNumberParam<int64_t, int64_t>(); }
-
-    template <>
-    hex GetParam<hex>() { return GetNumberParam<int64_t, int64_t>(true); }
 
     /** FLOATING POINTS **/
 

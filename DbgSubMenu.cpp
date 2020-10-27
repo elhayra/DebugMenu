@@ -1,11 +1,11 @@
 
 #include "DbgSubMenu.h"
+#include "DbgUtil.h"
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <chrono>
 
 // min chars to put before and after
 // the sub-menu name. This will also determine
@@ -24,10 +24,16 @@ namespace dbg {
         m_Width = m_Name.size() + (MIN_PRE_POST_BORDER_NAME_CHARS * 2);
 
         if ( ! m_Commands.empty() ) {
+            std::string cmdName = util::_GetFirstNonUniqueElement(m_Commands);
+            if ( ! cmdName.empty() ) {
+                printf("error: %s | Command name %s already exist\n", __PRETTY_FUNCTION__, cmdName.c_str()); // todo: RT_
+            }
+
             _AddCommandsNamePrefix();
             _CalcColsMaxWidths();
         }
     }
+
 
     void SubMenu::_AddCommandsNamePrefix() {
         std::for_each(m_Commands.begin(), m_Commands.end(), [&](Command& cmd){
@@ -106,10 +112,10 @@ namespace dbg {
     }
 
 
-    bool SubMenu::ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const {
+    SubMenu::eExecResult SubMenu::ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const {
 
         if (m_Commands.empty()) {
-            return false;
+            return eExecResult::NOT_FOUND;
         }
 
         std::string cmdNameCopy = cmdName;
@@ -128,7 +134,7 @@ namespace dbg {
                 inputCmdId = std::stoi(cmdNameCopy);// convert string id to number
             } catch (std::invalid_argument) {
                 printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
-                return false;
+                return eExecResult::PRE_COND_FAIL;
             }
             // if starts with '!' find by id
             comparatorFunc = [&inputCmdId](const Command& cmd) {
@@ -144,45 +150,18 @@ namespace dbg {
         if (cmdItr != std::end(m_Commands)) {
             const auto& cmd = *cmdItr;
             if (cmd.NumOfParams() != numParams) {
-                printf("error: wrong params number %s\n", __PRETTY_FUNCTION__);//todo: print error - wrong number of params
+                printf("error: wrong params number %s\n",
+                       __PRETTY_FUNCTION__);//todo: print error - wrong number of params
                 //todo: add to error description: according to your debug command description, your command needs cmd.NumOfParams() params, but only numParams were provided by command line
-            } else {
-                uint16_t numOfMeasureIters = 1;
-                if (multiMeasure) {
-                    numOfMeasureIters = 20000;
-                }
 
-                std::vector<uint64_t> durations;
-                durations.reserve(numOfMeasureIters);
-                bool cmdSuccess = false;
-
-                uint16_t itersLeftToRun = numOfMeasureIters;
-                while (itersLeftToRun > 0) {
-                    const auto begin = std::chrono::steady_clock::now();
-                    cmdSuccess |= cmd();
-                    const auto end = std::chrono::steady_clock::now();
-                    const uint64_t duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
-                    durations.push_back(duration);
-                    --itersLeftToRun;
-                }
-
-                uint64_t totalDurationNano = 0;
-                for (const uint64_t duration : durations) {
-                    totalDurationNano += duration;
-                }
-
-                const uint64_t avgTimeNano = totalDurationNano / durations.size();
-
-                if (cmdSuccess) { // execute command callback
-                    printf("\ncommand executed successfully\n"); //todo: rt_info
-                } else {
-                    printf("\ncommand failed\n"); //todo: rt_info
-                }
-                printf("ran %d iterations, avg time: %llu (nano)", numOfMeasureIters, avgTimeNano); //todo: rt_info
+                cmd.PrintHelp(); // if wrong number of params, give the user some help
+                return eExecResult::PRE_COND_FAIL;
             }
-            return true;
+
+            return cmd.Run(multiMeasure) ? eExecResult::FOUND_AND_SUCCEEDED : eExecResult::FOUND_BUT_FAILED;
         }
-        return false;
+        printf("error: %s command %s was not found", __PRETTY_FUNCTION__, cmdNameCopy.c_str()); //todo: print error
+        return eExecResult::NOT_FOUND;
     }
 
     bool SubMenu::PrintCommandHelpIfExist(const std::string & cmdName) const {
