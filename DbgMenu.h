@@ -31,7 +31,7 @@ namespace dbg {
          * @param cmdName - the name of the command to execute (must be unique)
          * @return - true if found command to execute, false otherwise
          */
-        bool ExecuteCommand(const std::string & cmdName, const uint8_t numParams) const;
+        bool HandleCommand(const std::string &cmdName, const uint8_t numParams) const;
 
         /**
          * Print command description (help)

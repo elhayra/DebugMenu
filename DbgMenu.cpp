@@ -70,17 +70,44 @@ namespace dbg {
      * @param cmdName - the name of the command to execute (must be unique)
      * @return - true if found command to execute, false otherwise
      */
-    bool Menu::ExecuteCommand(const std::string & cmdName, const uint8_t numParams) const {
+    bool Menu::HandleCommand(const std::string &cmdName, const uint8_t numParams) const {
         if (m_SubMenus.empty()) {
             return false;
         }
-        for (const auto subMenu : m_SubMenus) {
-            const auto execRes = subMenu.ExecuteCommandIfExist(cmdName, numParams);
-            if (execRes != SubMenu::eExecResult::NOT_FOUND) {
-                // in any case we found the command, stop searching for it and return
-                return true;
+
+        std::string cmdNameCopy = cmdName;
+
+        // special commands with prefix
+        if (cmdNameCopy.at(0) == '!') { // run command by id
+            cmdNameCopy.erase(0, 1); // remove first char ('!') so only id is left
+            uint16_t inputCmdId = 0;
+            try {
+                inputCmdId = std::stoi(cmdNameCopy);// convert string id to number
+            } catch (std::invalid_argument) {
+                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
+                return false;
+            }
+            for (const auto &subMenu : m_SubMenus) {
+                if (subMenu.ExecuteCommandById(inputCmdId, numParams)) { return true; }
+            }
+        } else if (cmdNameCopy.at(0) == '@') { // measure execution time multiple times for better results
+            cmdNameCopy.erase(0, 1); // remove first char ('@') so only cmd name is left
+            for (const auto &subMenu : m_SubMenus) {
+                if (subMenu.ExecuteCommandByName(cmdNameCopy, numParams, true)) { return true; }
+            }
+        } else if (cmdNameCopy.at(0) == '#') { // find all commands that contain string
+            cmdNameCopy.erase(0, 1); // remove first char ('#') so only cmd name is left
+
+            for (const auto &subMenu : m_SubMenus) {
+                subMenu.PrintCommandsContainingName(cmdNameCopy);
             }
         }
+
+        //standard command
+        for (const auto &subMenu : m_SubMenus) {
+            if (subMenu.ExecuteCommandByName(cmdNameCopy, numParams)) { return true; }
+        }
+
         return false;
     }
 

@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <cctype>
 
 // min chars to put before and after
 // the sub-menu name. This will also determine
@@ -80,6 +81,7 @@ namespace dbg {
                 std::cout << std::endl;
             }
         }
+
         std::cout << std::endl;
 
         _PrintSubMenuFooter(maxWidth);
@@ -111,67 +113,80 @@ namespace dbg {
         std::cout << std::string(maxWidth, DBG_SUB_MENU_BORDER_CHAR) << '\n';
     }
 
+    bool SubMenu::_ExecuteCommand(const Command& cmd,
+            const uint8_t numParams,
+            const bool multiMeasure) const
+    {
+        if (cmd.NumOfParams() != numParams) {
+            printf("error: wrong params number %s\n",
+                   __PRETTY_FUNCTION__);//todo: print error - wrong number of params
+            //todo: add to error description: according to your debug command description, your command needs cmd.NumOfParams() params, but only numParams were provided by command line
 
-    SubMenu::eExecResult SubMenu::ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const {
-
-        if (m_Commands.empty()) {
-            return eExecResult::NOT_FOUND;
-        }
-
-        std::string cmdNameCopy = cmdName;
-
-        // by default find by name
-        std::function<bool(const Command&)> comparatorFunc = [&cmdNameCopy](const Command& cmd) {
-            return cmd.Name() == cmdNameCopy;
-        };
-
-        bool multiMeasure = false;
-
-        if (cmdNameCopy.at(0) == '!') { // run command by id
-            cmdNameCopy.erase(0, 1); // remove first char ('!') so only id is left
-            uint16_t inputCmdId = 0;
-            try {
-                inputCmdId = std::stoi(cmdNameCopy);// convert string id to number
-            } catch (std::invalid_argument) {
-                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
-                return eExecResult::PRE_COND_FAIL;
-            }
-            // if starts with '!' find by id
-            comparatorFunc = [&inputCmdId](const Command& cmd) {
-                return cmd.Id() == inputCmdId;
-            };
-        } else if (cmdNameCopy.at(0) == '@') { // measure execution time multiple times for better results
-            cmdNameCopy.erase(0, 1); // remove first char ('@') so only cmd name is left
-            multiMeasure = true;
-        }
-
-        const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(), comparatorFunc);
-
-        if (cmdItr != std::end(m_Commands)) {
-            const auto& cmd = *cmdItr;
-            if (cmd.NumOfParams() != numParams) {
-                printf("error: wrong params number %s\n",
-                       __PRETTY_FUNCTION__);//todo: print error - wrong number of params
-                //todo: add to error description: according to your debug command description, your command needs cmd.NumOfParams() params, but only numParams were provided by command line
-
-                cmd.PrintHelp(); // if wrong number of params, give the user some help
-                return eExecResult::PRE_COND_FAIL;
-            }
-
-            return cmd.Run(multiMeasure) ? eExecResult::FOUND_AND_SUCCEEDED : eExecResult::FOUND_BUT_FAILED;
-        }
-        printf("error: %s command %s was not found", __PRETTY_FUNCTION__, cmdNameCopy.c_str()); //todo: print error
-        return eExecResult::NOT_FOUND;
-    }
-
-    bool SubMenu::PrintCommandHelpIfExist(const std::string & cmdName) const {
-
-        if (m_Commands.empty()) {
+            cmd.PrintHelp(); // if wrong number of params, give the user some help
             return false;
         }
 
+        return cmd.Run(multiMeasure);
+    }
+
+    bool SubMenu::ExecuteCommandByName(const std::string &cmdName,
+                                                       const uint8_t numParams,
+                                                       const bool multiMeasure) const
+    {
+        if (m_Commands.empty()) { return false; }
+
+        std::string cmdNameCopy = cmdName;
+
+        const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(), [&cmdNameCopy](const Command& cmd)
+                { return util::StrToUpperCase(cmd.Name()) == util::StrToUpperCase(cmdNameCopy); });
+
+        if (cmdItr != std::end(m_Commands)) {
+            _ExecuteCommand(*cmdItr, numParams, multiMeasure);
+            return true; // return true because we found command (even if execution failed)
+        }
+        printf("error: %s command name %s was not found", __PRETTY_FUNCTION__, cmdNameCopy.c_str()); //todo: print error
+        return false;
+    }
+
+    bool SubMenu::ExecuteCommandById(const uint16_t id, const uint8_t numParams) const {
+        if (m_Commands.empty()) { return false; }
+
         const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(),
-                [&cmdName](const Command& cmd){ return cmd.Name() == cmdName; });
+                                         [id](const Command& cmd) { return cmd.Id() == id; });
+
+        if (cmdItr != std::end(m_Commands)) {
+            _ExecuteCommand(*cmdItr, numParams, false);
+            return true; // return true because we found command (even if execution failed)
+        }
+        printf("error: %s command id %d was not found", __PRETTY_FUNCTION__, id);//todo: print error
+        return false;
+    }
+
+    void SubMenu::PrintCommandsContainingName(const std::string& name) const {
+        if (m_Commands.empty()) { return; }
+
+        std::vector<std::string> cmdMatches;
+        for (const auto& cmd : m_Commands) {
+            if (util::StrToUpperCase(cmd.Name()).find(util::StrToUpperCase(name)) != std::string::npos) {
+                cmdMatches.push_back(cmd.Name());
+            }
+        }
+
+        if (cmdMatches.empty()) { return; }
+
+        printf("sub-menu %s commands that matches the string %s\n", m_Name.c_str(), name.c_str());
+        for (const auto& match : cmdMatches) {
+            printf("- %s\n", match.c_str());
+        }
+    }
+
+
+    bool SubMenu::PrintCommandHelpIfExist(const std::string & cmdName) const {
+
+        if (m_Commands.empty()) { return false; }
+
+        const auto cmdItr = std::find_if(m_Commands.begin(), m_Commands.end(), [&cmdName](const Command& cmd){
+            return util::StrToUpperCase(cmd.Name()) == util::StrToUpperCase(cmdName); });
 
         if (cmdItr != std::end(m_Commands)) {
             cmdItr->PrintHelp();

@@ -32,24 +32,45 @@ namespace dbg {
 
         void _AddCommandsNamePrefix();
 
+        /**
+         * Execute command, return true if succeeded
+         * @param cmd
+         * @param numParams
+         * @param multiMeasure
+         * @return
+         */
+        bool _ExecuteCommand(const Command& cmd,
+                const uint8_t numParams,
+                const bool multiMeasure) const ;
+
     public:
-        enum class eExecResult {
-            FOUND_BUT_FAILED, // found command but execution failed
-            FOUND_AND_SUCCEEDED, // found command and execution succeeded
-            NOT_FOUND, // command not found in this sub-menu,
-            PRE_COND_FAIL // other pre-condition failed
-        };
 
         SubMenu(const std::string & name,
              const std::string & description,
              const std::vector<Command> & cmds);
 
+
         /**
-         * Execute command if it exist in this sub menu
+         * Execute command if it exist in this sub menu (search by name)
          * @param cmdName - command name to execute
-         * @return eExecResult
+         * @return true if the command was found
          */
-        eExecResult ExecuteCommandIfExist(const std::string & cmdName, const uint8_t numParams) const ;
+        bool ExecuteCommandByName(const std::string &cmdName,
+                const uint8_t numParams,
+                const bool multiMeasure = false) const ;
+
+        /**
+         * Execute command if it exist in this sub menu (search by id)
+         * @param cmdName - command name to execute
+         * @return true if the command was found
+         */
+        bool ExecuteCommandById(const uint16_t id, const uint8_t numParams) const;
+
+        /**
+         * Print all commands that contains a given name
+         * @param name
+         */
+        void PrintCommandsContainingName(const std::string& name) const;
 
         /**
          * print command help if it exist in this sub menu

@@ -16,6 +16,7 @@
 // automatically show help in case of parameters error
 // use '!' command prefix to execute command by number id as a shortcut
 // use '@' command prefix to perform accurate time measurement of execution
+// use '#' command prefix to search command that contains name X
 // after command execution success / failure message will be printed automatically with appropriate error if available
 // return boolean or dbg::cmd_ret_t{bool, string} type from function in case you want to print error message
 // in case command failed because of wrong number of params, print help text automatically to help user
@@ -24,31 +25,8 @@
 
 
 //--------TODO---------
-/**
- * - add documentation to the debug main menu description about the ! and # prefixes
- *
- * - if command fails because of wrong params, print help automatically
- *
- * - validate uniqueness of each submenu name
- *
- * - validate uniqueness of each command in submenu
- *
-//todo: write macros to assert params boundaries and print auto error with numbers in case failed
-
-//todo: automatically print command help menu if params are wrong or num of params is wrong
-//todo: move includes and impl code  to the right place in cpp file
- *
 //todo: apply bit error checking to all conversions
-//todo: user colors for menus, commands, options, outputs
  //todo: add documentation comments wherever possible
-
-// parser prints errors internally
-// easier APIs to remember and use
-
-
-//todo: print error in case string is empty in the macro
- *
- */
 //--------BUGS----------
 
 
@@ -82,6 +60,7 @@ int main() {
 
     // I could count the params automatically, but we already get them from the current implementation
     dbg::MainMenu::Instance().ExecuteCommand("PutinMenuLaunchRockets", "15 elhay", 2);
+//    dbg::MainMenu::Instance().ExecuteCommand("#rockets", "15 elhay", 2);
 
 //    dbg::MainMenu::Instance().PrintCommandHelp("PutinMenuLaunchRockets");
 
