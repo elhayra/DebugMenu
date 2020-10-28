@@ -36,12 +36,7 @@ namespace dbg {
 
         std::string Description() const { return m_Description; }
 
-        size_t Width() const {
-            if (m_Width == 0) { // not initialized
-                printf("error: %s\n", __PRETTY_FUNCTION__);
-            }
-            return m_Width;
-        }
+        size_t Width() const ;
     };
 }
 

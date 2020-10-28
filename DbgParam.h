@@ -8,7 +8,6 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
 
 namespace dbg {
 
@@ -18,15 +17,8 @@ namespace dbg {
         const std::string m_Value;
 
     public:
-       Option(const std::string & value, const std::string & name, const std::string & descp = "") :
-            m_Value{value},
-           PrintableEntity(name, descp){ }
-        void Print(const size_t maxWidth = 0) const override {
-           std::cout << '[' + m_Value + "] <" + m_Name + '>';
-           if ( ! m_Description.empty() ) {
-               std::cout << " - " + m_Description;
-           }
-       }
+       Option(const std::string & value, const std::string & name, const std::string & descp = "") ;
+        void Print(const size_t maxWidth = 0) const override ;
     };
 
     class Param : public PrintableEntity {
@@ -36,21 +28,9 @@ namespace dbg {
     public:
         Param(const std::string & name,
                 const std::string & description,
-                const std::vector<Option> & options = std::vector<Option>()) :
-                    PrintableEntity(name, description),
-                    m_Options{options}
-                    {  }
+                const std::vector<Option> & options = std::vector<Option>());
 
-        void Print(const size_t maxWidth = 0) const override {
-            std::cout << "\t<" + m_Name + "> - " + m_Description + '\n';
-            if (m_Options.empty()) {return;}
-            for (const auto option : m_Options) {
-                std::cout << "\t\t";
-                option.Print();
-                std::cout << std::endl;
-            }
-            std::cout << std::endl;
-        }
+        void Print(const size_t maxWidth = 0) const override ;
     };
 
 }

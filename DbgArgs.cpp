@@ -5,24 +5,6 @@
 
 namespace dbg {
 
-
-//    uint8_t Args::_CountParams() const {
-//        uint16_t idx = 0;
-//        bool seenSpace = true;
-//        uint8_t numParams = 0;
-//        while (idx < m_CharsArrSize) {
-//           if (m_CharsArr[idx++] != ' ') {
-//               if (seenSpace) {
-//                   seenSpace = false;
-//                   ++numParams;
-//               }
-//           } else {
-//               seenSpace = true;
-//           }
-//        }
-//        return numParams;
-//    }
-
     void Args::SetArgs(const char * charsArr, const uint8_t numParams) {
         m_CharsArrSize = std::strlen(charsArr);
         m_CharsArr = charsArr;
@@ -68,5 +50,29 @@ namespace dbg {
 
         return paramStr;
     }
+
+
+    /**
+     * this function was tested and is working find. the old dbg already
+     * provide params count which proved to be reliable, so we'll use it
+     * instead of this one. left here in case needed for some reason in
+     * the future
+     */
+    //    uint8_t Args::_CountParams() const {
+    //        uint16_t idx = 0;
+    //        bool seenSpace = true;
+    //        uint8_t numParams = 0;
+    //        while (idx < m_CharsArrSize) {
+    //           if (m_CharsArr[idx++] != ' ') {
+    //               if (seenSpace) {
+    //                   seenSpace = false;
+    //                   ++numParams;
+    //               }
+    //           } else {
+    //               seenSpace = true;
+    //           }
+    //        }
+    //        return numParams;
+    //    }
 
 }
