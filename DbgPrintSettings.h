@@ -34,5 +34,10 @@
 #define DBG_SUB_MENU_BORDER_CHAR    '='
 #define DBG_MENU_BORDER             '|'
 
+// min chars to put before and after
+// the sub-menu name. This will also determine
+// the min width along with the sub-menu name
+#define DBG_MIN_PRE_POST_BORDER_NAME_CHARS   3
+
 
 #endif //DEBUG_MENU_DBGPRINTSETTINGS_H

@@ -8,10 +8,6 @@
 #include <algorithm>
 #include <cctype>
 
-// min chars to put before and after
-// the sub-menu name. This will also determine
-// the min width along with the sub-menu name
-#define MIN_PRE_POST_BORDER_NAME_CHARS   3
 
 namespace dbg {
 
@@ -22,7 +18,7 @@ namespace dbg {
             m_Commands{cmds}
     {
         // set min width as a starting point
-        m_Width = m_Name.size() + (MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+        m_Width = m_Name.size() + (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
 
         if ( ! m_Commands.empty() ) {
             std::string cmdName = util::_GetFirstNonUniqueElement(m_Commands);
@@ -144,7 +140,6 @@ namespace dbg {
             _ExecuteCommand(*cmdItr, numParams, multiMeasure);
             return true; // return true because we found command (even if execution failed)
         }
-        printf("error: %s command name %s was not found", __PRETTY_FUNCTION__, cmdNameCopy.c_str()); //todo: print error
         return false;
     }
 
@@ -158,7 +153,6 @@ namespace dbg {
             _ExecuteCommand(*cmdItr, numParams, false);
             return true; // return true because we found command (even if execution failed)
         }
-        printf("error: %s command id %d was not found", __PRETTY_FUNCTION__, id);//todo: print error
         return false;
     }
 

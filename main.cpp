@@ -27,18 +27,17 @@
 //--------TODO---------
 //todo: apply bit error checking to all conversions
  //todo: add documentation comments wherever possible
+ //todo: https://stackoverflow.com/questions/8047261/what-does-dot-mean-in-a-struct-initializer
 //--------BUGS----------
 
 
 //--------TESTS---------
-//todo: test empty menu (with no subMenus)
+//todo: test empty menu (with no subMenus) -- V
 //todo: write tests for all params functions
 //todo: write tests for getting params of bad strings line "sdf 98 1" or strings where length doesnt match the num of args in the string
 //todo: write test for trying to get more args than exist
-//todo: write test for duplicate command/menu
-//todo: write test for non-exist command/menu
-//todo: add colors to printings
-//todo: print temp error with printf for all the errors todo: and test them
+//todo: write test for duplicate command/menu -- V
+//todo: write test for non-exist command/menu -- V
 //todo: create only sub menus and menus with no commands in them, or very very short commands and very long menus names to see if menus padding is ruined
 
 
@@ -59,7 +58,7 @@ int main() {
     dbg::MainMenu::Instance().Print();
 
     // I could count the params automatically, but we already get them from the current implementation
-    dbg::MainMenu::Instance().ExecuteCommand("PutinMenuLaunchRockets", "15 elhay", 2);
+    dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
 //    dbg::MainMenu::Instance().ExecuteCommand("#rockets", "15 elhay", 2);
 
 //    dbg::MainMenu::Instance().PrintCommandHelp("PutinMenuLaunchRockets");

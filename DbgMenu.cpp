@@ -10,6 +10,25 @@
 
 namespace dbg {
 
+    Menu::Menu(const std::string & name,
+               const std::string & description,
+               const std::vector<SubMenu> & subMenus) :
+            PrintableEntity(name, description),
+            m_SubMenus{subMenus}
+    {
+        // set min width as a starting point
+        m_Width = std::max(m_Description.size(), m_Name.size()) +
+                (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+        if ( ! subMenus.empty() ) {
+            std::string existSubMenu = util::_GetFirstNonUniqueElement(m_SubMenus);
+            if (existSubMenu != "") {
+                printf("error: %s | Sub-Menu name %s already exist\n", __PRETTY_FUNCTION__, existSubMenu.c_str()); // todo: RT_
+            } else {
+                m_Width = GetSubElementWithMaxWidth();
+            }
+        }
+    }
+
     void Menu::_PrintMenuHeader(const size_t maxWidth) const {
 
         // add title top border
@@ -52,18 +71,7 @@ namespace dbg {
         std::cout << std::string(maxWidth, DBG_MENU_BORDER) << '\n';
     }
 
-    Menu::Menu(const std::string & name,
-         const std::string & description,
-         const std::vector<SubMenu> & subMenus) :
-            PrintableEntity(name, description),
-            m_SubMenus{subMenus}
-    {
-        std::string subMenuName = util::_GetFirstNonUniqueElement(m_SubMenus);
-        if ( ! subMenuName.empty() ) {
-            printf("error: %s | Sub-Menu name %s already exist\n", __PRETTY_FUNCTION__, subMenuName.c_str()); // todo: RT_
-        }
-        m_Width = GetSubElementWithMaxWidth();
-    }
+
 
     /**
      * Execute command

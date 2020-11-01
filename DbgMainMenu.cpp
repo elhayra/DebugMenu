@@ -49,6 +49,7 @@ namespace dbg {
                 return;
             }
         }
+        printf("command %s does not exist\n", cmdName.c_str());
     }
 
     void MainMenu::PrintCommandHelp(const std::string& cmdName) {
