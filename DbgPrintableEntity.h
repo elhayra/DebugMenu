@@ -7,6 +7,7 @@
 
 namespace dbg {
 
+
     class PrintableEntity {
     protected:
         std::string m_Name;
@@ -14,9 +15,9 @@ namespace dbg {
         size_t m_Width {0};
 
         PrintableEntity(const std::string & name,
-              const std::string & description) :
-              m_Name{name},
-              m_Description{description} {  }
+              const std::string & description);
+
+        void _VerifyName();
 
 
     public:

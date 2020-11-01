@@ -39,9 +39,7 @@ namespace dbg {
                 const std::string & description,
                 const std::vector<Option> & options = std::vector<Option>());
 
-        Param(const param_data_t & paramData) :
-        PrintableEntity(paramData.Name, paramData.Description),
-        m_Options{paramData.Options} { }
+        Param(const param_data_t & paramData);
 
         void Print(const size_t maxWidth = 0) const override ;
     };

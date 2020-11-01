@@ -87,20 +87,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
             "MySuperZevikCommand",
             "command 2 description",
             { // params list
-                    { //param1
-                            "param 1 name",
-                            "param1 descpription",
-                            { //options list
-                                    {"opt1 value", "opt1 name", "opt1 description"},
-                                    {"opt2 value", "opt2 name"} // value description is optional
-                            }
-                    },
-                    { // param2
 
-                            "param 1 name",
-                            "param1 descpription"
-                            // option list is optional
-                    }
             },
             []() {
                 return true;
@@ -237,7 +224,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     ////////////////////////////////////////
 
     dbg::Menu myMenu{
-            "MyMenu",
+            "Finisar400Zr",
             "my menu description",
             {
                     mySubMenu1,

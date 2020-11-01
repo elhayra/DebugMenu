@@ -17,24 +17,37 @@ namespace dbg {
             PrintableEntity(name, description),
             m_Commands{cmds}
     {
-        // set min width as a starting point
-        m_Width = m_Name.size() + (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+        _SetMinWidth();
+    }
 
+    SubMenu::SubMenu(const submenu_data_t& submenuData) :
+            PrintableEntity(submenuData.Name, submenuData.Description),
+            m_Commands{submenuData.Commands}
+    {
+        _SetMinWidth();
+    }
+
+
+    void SubMenu::_SetMinWidth() {
+        m_Width = m_Name.size() + (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+    }
+
+    void SubMenu::MenuHolderInit(const std::string& holderName) {
         if ( ! m_Commands.empty() ) {
             std::string cmdName = util::_GetFirstNonUniqueElement(m_Commands);
             if ( ! cmdName.empty() ) {
                 printf("error: %s | Command name %s already exist\n", __PRETTY_FUNCTION__, cmdName.c_str()); // todo: RT_
             }
 
-            _AddCommandsNamePrefix();
+            _AddCommandsNamePrefix(holderName);
             _CalcColsMaxWidths();
         }
     }
 
 
-    void SubMenu::_AddCommandsNamePrefix() {
+    void SubMenu::_AddCommandsNamePrefix(const std::string& name) {
         std::for_each(m_Commands.begin(), m_Commands.end(), [&](Command& cmd){
-            cmd.AddSubMenuNameAsPrefix(Name()); });
+            cmd.AddSubMenuNameAsPrefix(name); });
     }
 
     void SubMenu::_CalcColsMaxWidths() {

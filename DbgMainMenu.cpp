@@ -44,12 +44,59 @@ namespace dbg {
 
         dbg::Args::Inst().SetArgs(params, numParams);
 
-        for (const auto & menu : m_Menus) {
-            if (menu.HandleCommand(cmdName, numParams)) {
-                return;
+//        for (const auto & menu : m_Menus) {
+//            if (menu.HandleCommand(cmdName, numParams)) {
+//                return;
+//            }
+//        }
+//        printf("command %s does not exist\n", cmdName.c_str());
+
+
+
+
+
+
+        if (m_Menus.empty()) {
+            printf("error: no menus are created, can't run any command %s", __PRETTY_FUNCTION__);
+            return;
+        }
+
+        std::string cmdNameCopy = cmdName;
+
+        const SpecialCmdType cmdType = static_cast<SpecialCmdType>(cmdNameCopy.at(0));
+
+        switch (cmdType) {
+            case SpecialCmdType::RUN_BY_ID: {
+                cmdNameCopy.erase(0, 1); // remove first char ('!') so only id is left
+                for (const auto &menu : m_Menus) {
+                    if (menu.RunCommandById(cmdNameCopy, numParams)) { return; }
+                }
+                printf("command id %s not found %s\n", cmdNameCopy.c_str(), __PRETTY_FUNCTION__);
+                break;
+            }
+            case SpecialCmdType ::MULTI_BENCHMARK: {
+                cmdNameCopy.erase(0, 1); // remove first char ('@') so only cmd name is left
+                for (const auto &menu : m_Menus) {
+                    if (menu.RunCommandByName(cmdNameCopy, numParams, true)) { return; }
+                }
+                printf("command %s not found %s\n", cmdNameCopy.c_str(), __PRETTY_FUNCTION__);
+                break;
+            }
+            case SpecialCmdType ::SEARCH: {
+                cmdNameCopy.erase(0, 1); // remove first char ('#') so only cmd name is left
+                for (const auto &menu : m_Menus) {
+                    menu.PrintCommandsContainingName(cmdNameCopy);
+                }
+                break;
+            }
+            default: { // run command by name
+                for (const auto &menu : m_Menus) {
+                    if (menu.RunCommandByName(cmdNameCopy, numParams)) { return; }
+                }
+                printf("command %s not found %s\n", cmdNameCopy.c_str(), __PRETTY_FUNCTION__);
             }
         }
-        printf("command %s does not exist\n", cmdName.c_str());
+
     }
 
     void MainMenu::PrintCommandHelp(const std::string& cmdName) {

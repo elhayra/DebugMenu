@@ -16,10 +16,22 @@ namespace dbg {
             PrintableEntity(name, description),
             m_SubMenus{subMenus}
     {
+        _InitEssentials();
+    }
+
+    Menu::Menu(const menu_data_t& menuData) :
+            PrintableEntity(menuData.Name, menuData.Description),
+            m_SubMenus{menuData.SubMenus}
+    {
+        _InitEssentials();
+    }
+
+    void Menu::_InitEssentials() {
         // set min width as a starting point
         m_Width = std::max(m_Description.size(), m_Name.size()) +
-                (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
-        if ( ! subMenus.empty() ) {
+                  (DBG_MIN_PRE_POST_BORDER_NAME_CHARS * 2);
+        if ( ! m_SubMenus.empty() ) {
+            for (auto & subMenu : m_SubMenus) { subMenu.MenuHolderInit(Name()); }
             std::string existSubMenu = util::_GetFirstNonUniqueElement(m_SubMenus);
             if (existSubMenu != "") {
                 printf("error: %s | Sub-Menu name %s already exist\n", __PRETTY_FUNCTION__, existSubMenu.c_str()); // todo: RT_
@@ -73,52 +85,38 @@ namespace dbg {
 
 
 
-    /**
-     * Execute command
-     * @param cmdName - the name of the command to execute (must be unique)
-     * @return - true if found command to execute, false otherwise
-     */
-    bool Menu::HandleCommand(const std::string &cmdName, const uint8_t numParams) const {
-        if (m_SubMenus.empty()) {
+    bool Menu::RunCommandById(const std::string &cmdName, const uint8_t numParams) const {
+        uint16_t inputCmdId = 0;
+        try {
+            inputCmdId = std::stoi(cmdName);// convert string id to number
+        } catch (std::invalid_argument) {
+            printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
             return false;
         }
-
-        std::string cmdNameCopy = cmdName;
-
-        // special commands with prefix
-        if (cmdNameCopy.at(0) == '!') { // run command by id
-            cmdNameCopy.erase(0, 1); // remove first char ('!') so only id is left
-            uint16_t inputCmdId = 0;
-            try {
-                inputCmdId = std::stoi(cmdNameCopy);// convert string id to number
-            } catch (std::invalid_argument) {
-                printf("error: %s\n", __PRETTY_FUNCTION__);//todo: print error - conversion to int failed
-                return false;
-            }
-            for (const auto &subMenu : m_SubMenus) {
-                if (subMenu.ExecuteCommandById(inputCmdId, numParams)) { return true; }
-            }
-        } else if (cmdNameCopy.at(0) == '@') { // measure execution time multiple times for better results
-            cmdNameCopy.erase(0, 1); // remove first char ('@') so only cmd name is left
-            for (const auto &subMenu : m_SubMenus) {
-                if (subMenu.ExecuteCommandByName(cmdNameCopy, numParams, true)) { return true; }
-            }
-        } else if (cmdNameCopy.at(0) == '#') { // find all commands that contain string
-            cmdNameCopy.erase(0, 1); // remove first char ('#') so only cmd name is left
-
-            for (const auto &subMenu : m_SubMenus) {
-                subMenu.PrintCommandsContainingName(cmdNameCopy);
-            }
-            return false; // keep looking on other sub-menus
-        }
-
-        //standard command
         for (const auto &subMenu : m_SubMenus) {
-            if (subMenu.ExecuteCommandByName(cmdNameCopy, numParams)) { return true; }
+            if (subMenu.ExecuteCommandById(inputCmdId, numParams)) { return true; }
         }
-
         return false;
     }
+
+    bool Menu::RunCommandByName(const std::string &cmdName,
+            const uint8_t numParams,
+            const bool benchmark) const
+    {
+        for (const auto &subMenu : m_SubMenus) {
+            if (subMenu.ExecuteCommandByName(cmdName, numParams, benchmark)) { return true; }
+        }
+        return false;
+    }
+
+    bool Menu::PrintCommandsContainingName(const std::string &cmdName) const
+    {
+        for (const auto &subMenu : m_SubMenus) {
+            subMenu.PrintCommandsContainingName(cmdName);
+        }
+        return false;
+    }
+
 
     /**
      * Print command description (help)

@@ -18,6 +18,12 @@
 
 namespace dbg {
 
+    enum class SpecialCmdType {
+        RUN_BY_ID =       '!',  // run command by its ID
+        MULTI_BENCHMARK = '@',  // measure execution multiple times for better accuracy
+        SEARCH =          '#'   // search commands that contains a string
+    };
+
     struct cmd_ret_t {
         bool Success;
         std::string Message;
@@ -40,8 +46,6 @@ namespace dbg {
         const std::vector<Param> m_Params;
 
         void _UpdateWidthByName() { m_Width = m_Name.size() + 4; }
-
-        void _VerifyName();
 
     public:
         Command(const std::string &name,

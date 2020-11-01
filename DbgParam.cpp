@@ -33,6 +33,13 @@ namespace dbg {
             m_Options{options}
     {  }
 
+
+    Param::Param(const param_data_t & paramData) :
+            PrintableEntity(paramData.Name, paramData.Description),
+            m_Options{paramData.Options}
+    {  }
+
+
     void Param::Print(const size_t maxWidth) const {
         std::cout << "\t<" + m_Name + "> - " + m_Description + '\n';
         if (m_Options.empty()) {return;}

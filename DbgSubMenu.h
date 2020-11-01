@@ -16,6 +16,12 @@
 namespace dbg {
 
 
+    struct submenu_data_t {
+        std::string Name;
+        std::string Description;
+        std::vector<Command> Commands;
+    };
+
     class SubMenu : public PrintableEntity{
     private:
 
@@ -30,7 +36,7 @@ namespace dbg {
 
         void _CalcColsMaxWidths();
 
-        void _AddCommandsNamePrefix();
+        void _AddCommandsNamePrefix(const std::string& name);
 
         /**
          * Execute command, return true if succeeded
@@ -43,11 +49,20 @@ namespace dbg {
                 const uint8_t numParams,
                 const bool multiMeasure) const ;
 
+        /**
+         * Set min width as starting poing
+         */
+        void _SetMinWidth();
+
     public:
 
         SubMenu(const std::string & name,
              const std::string & description,
              const std::vector<Command> & cmds);
+
+        SubMenu(const submenu_data_t& submenuData);
+
+        void MenuHolderInit(const std::string& holderName);
 
 
         /**

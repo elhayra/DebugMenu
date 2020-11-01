@@ -12,6 +12,11 @@
 
 namespace dbg {
 
+    struct menu_data_t {
+        std::string Name;
+        std::string Description;
+        std::vector<SubMenu> SubMenus;
+    };
 
     class Menu : public PrintableEntity {
     private:
@@ -21,17 +26,20 @@ namespace dbg {
 
         void _PrintMenuFooter(const size_t maxWidth) const;
 
+        void _InitEssentials();
+
     public:
         Menu(const std::string & name,
              const std::string & description,
              const std::vector<SubMenu> & subMenus);
 
-        /**
-         * Execute command
-         * @param cmdName - the name of the command to execute (must be unique)
-         * @return - true if found command to execute, false otherwise
-         */
-        bool HandleCommand(const std::string &cmdName, const uint8_t numParams) const;
+        Menu(const menu_data_t& menuData);
+
+        bool RunCommandById(const std::string &cmdName, const uint8_t numParams) const;
+
+        bool RunCommandByName(const std::string &cmdName, const uint8_t numParams, const bool benchmark = false) const;
+
+        bool PrintCommandsContainingName(const std::string &cmdName) const;
 
         /**
          * Print command description (help)
