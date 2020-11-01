@@ -3,6 +3,8 @@
 #include "DbgMainMenu.h"
 
 #include "MyExampleDebugMenu.h"
+#include "MyExampleDbgMenu2.h"
+
 
 
 // === Features ===
@@ -22,6 +24,7 @@
 // in case command failed because of wrong number of params, print help text automatically to help user
 // params parser detect '0x' prefix automatically and parse the number as hex
 // if command/submenu/menu already exist, print error
+// 2 ways to declare commands
 
 
 //--------TODO---------
@@ -43,25 +46,19 @@
 
 int main() {
 
-//    std::string str = "0x31";
-//    dbg::Args::Inst().SetArgs(str.c_str(), 1);
-//
-//    dbg::hex a = dbg::GetParam<dbg::hex>();
-//
-//    printf("param is %lld", a.Value);
-
 
     // register your debug menu to main menu
     dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu::LoadDebugMenu());
+//    dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu2::LoadDebugMenu());
     //todo: test another debug menu addition
 
     dbg::MainMenu::Instance().Print();
 
     // I could count the params automatically, but we already get them from the current implementation
     dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2);
-//    dbg::MainMenu::Instance().ExecuteCommand("#rockets", "15 elhay", 2);
+    dbg::MainMenu::Instance().ExecuteCommand("#MySuperZevikCommand", "", 0);
 
-//    dbg::MainMenu::Instance().PrintCommandHelp("PutinMenuLaunchRockets");
+//    dbg::MainMenu::Instance().PrintCommandHelp("BibiBuy6Submarines");
 
     return 0;
 }

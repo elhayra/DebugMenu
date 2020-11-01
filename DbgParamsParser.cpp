@@ -59,6 +59,11 @@ namespace {
         } else {
             ss >> res;
         }
+        if (ss.fail()) {
+            ss.clear();
+            printf("error: failed to parse param value '%s' as a number %s\n", ss.str().c_str(), __PRETTY_FUNCTION__); // todo: rt_err
+            return 0;
+        }
         return WithinNumericBoundsIncluded<T, S>(res) ? res : 0;
     }
 }

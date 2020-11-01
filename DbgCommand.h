@@ -25,6 +25,13 @@ namespace dbg {
             Success{success}, Message{msg} { }
     };
 
+    struct cmd_data_t {
+        std::string Name;
+        std::string Description;
+        std::vector<Param> Params;
+        std::function<cmd_ret_t()> Callback;
+    };
+
     class Command : public PrintableEntity {
     private:
         static uint16_t m_IdGen;
@@ -34,11 +41,15 @@ namespace dbg {
 
         void _UpdateWidthByName() { m_Width = m_Name.size() + 4; }
 
+        void _VerifyName();
+
     public:
         Command(const std::string &name,
                 const std::string &description,
                 const std::vector<Param> &params,
                 const std::function<cmd_ret_t()> &callback);
+
+        Command(const cmd_data_t & cmdData);
 
         Command(const Command& other);
 

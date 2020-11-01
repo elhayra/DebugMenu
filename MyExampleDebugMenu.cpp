@@ -102,7 +102,9 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
                             // option list is optional
                     }
             },
-            f  //regular function
+            []() {
+                return true;
+            }
     };
 
     dbg::Command cmd4{

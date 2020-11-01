@@ -16,6 +16,17 @@ namespace dbg {
             m_Params{params},
             m_Callback{callback}
     {
+        _VerifyName();
+        m_Width = m_Name.size();
+    }
+
+    Command::Command(const cmd_data_t & cmdData)  :
+            PrintableEntity{cmdData.Name, cmdData.Description},
+            m_Id{m_IdGen++},
+            m_Params{cmdData.Params},
+            m_Callback{cmdData.Callback}
+    {
+        _VerifyName();
         m_Width = m_Name.size();
     }
 
@@ -25,10 +36,15 @@ namespace dbg {
             m_Params{other.m_Params},
             m_Callback{other.m_Callback}
     {
+        _VerifyName();
         m_Width = other.Width();
     }
 
-
+    void Command::_VerifyName() {
+        if (m_Name.empty()) {
+            printf("error name of command id: %d can't be blank %s\n", m_Id, __PRETTY_FUNCTION__); //todo: rt_err
+        }
+    }
 
     void Command::AddSubMenuNameAsPrefix(const std::string & subMenuName) {
         m_Name = subMenuName + m_Name;

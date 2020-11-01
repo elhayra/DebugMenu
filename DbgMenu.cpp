@@ -109,6 +109,7 @@ namespace dbg {
             for (const auto &subMenu : m_SubMenus) {
                 subMenu.PrintCommandsContainingName(cmdNameCopy);
             }
+            return false; // keep looking on other sub-menus
         }
 
         //standard command
