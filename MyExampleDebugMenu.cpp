@@ -84,7 +84,7 @@ dbg::Menu MyExampleDebugMenu::LoadDebugMenu() {
     };
 
     dbg::Command cmd3{
-            "MySuperZevikCommand",
+            "CallKGB",
             "command 2 description",
             { // params list
 

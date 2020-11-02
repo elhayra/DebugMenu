@@ -57,7 +57,7 @@ namespace dbg {
 
         Command(const Command& other);
 
-        Command(const Command&& other) = delete;
+        Command(const Command&& other);
 
         uint16_t Id() const { return m_Id; }
 

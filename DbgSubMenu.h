@@ -28,7 +28,7 @@ namespace dbg {
         std::vector<Command> m_Commands;
 
         // hold max command length in each column
-        std::array<size_t, DBG_NUM_CMD_IN_ROW> m_ColsMaxWidth {0};
+        std::array<size_t, DBG_NUM_CMD_IN_ROW> m_ColsMaxWidth {{0}};
 
         void _PrintSubMenuHeader(const size_t maxWidth) const ;
 

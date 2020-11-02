@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <algorithm>
 #include "DbgPrintableEntity.h"
 
 namespace dbg {

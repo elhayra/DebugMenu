@@ -1,6 +1,7 @@
 
 
 #include "DbgCommand.h"
+#include <algorithm>
 
 namespace dbg {
 
@@ -29,6 +30,16 @@ namespace dbg {
     }
 
     Command::Command(const Command& other) :
+            PrintableEntity{other.m_Name, other.m_Description},
+            m_Id{other.m_Id},
+            m_Params{other.m_Params},
+            m_Callback{other.m_Callback}
+    {
+        m_Width = other.Width();
+    }
+
+
+    Command::Command(const Command&& other) :
             PrintableEntity{other.m_Name, other.m_Description},
             m_Id{other.m_Id},
             m_Params{other.m_Params},

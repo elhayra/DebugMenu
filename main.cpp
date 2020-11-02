@@ -48,16 +48,17 @@ int main() {
 
 
     // register your debug menu to main menu
-    dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu::LoadDebugMenu());
-    dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu2::LoadDebugMenu()); //second menu
-
-    dbg::MainMenu::Instance().Print();
+    
+//    dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu::LoadDebugMenu());
+//    dbg::MainMenu::Instance().AddMenu(MyExampleDebugMenu2::LoadDebugMenu()); //second menu
+//
+//    dbg::MainMenu::Instance().Print();
 
     // I could count the params automatically, but we already get them from the current implementation
 //    dbg::MainMenu::Instance().ExecuteCommand("Finisar400ZrLaunchRockets", "15 elhay", 2); // run by name
 //    dbg::MainMenu::Instance().ExecuteCommand("!0", "15 elhay", 2); // run by id
-//    dbg::MainMenu::Instance().ExecuteCommand("#zevik", "", 0); // search cmds with sub string
-//    dbg::MainMenu::Instance().ExecuteCommand("@Finisar400ZrMySuperZevikCommand", "", 0); // benchmark cmd
+//    dbg::MainMenu::Instance().ExecuteCommand("#ode", "", 0); // search cmds with sub string
+//    dbg::MainMenu::Instance().ExecuteCommand("@Finisar400ZrCallKGB", "", 0); // benchmark cmd
 
 //    dbg::MainMenu::Instance().PrintCommandHelp("MyOtherMenuBuy6Submarines");
 
